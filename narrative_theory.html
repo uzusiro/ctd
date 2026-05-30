@@ -1,0 +1,967 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>求心的物語構造理論</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@300;400;500;700&family=Shippori+Mincho:wght@400;500;700&family=Noto+Sans+JP:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink: #1a1714;
+    --ink-2: #3d3830;
+    --ink-3: #6b6359;
+    --paper: #f7f3ee;
+    --paper-2: #ede8e1;
+    --paper-3: #e2dbd1;
+    --amber: #b5640a;
+    --amber-light: #f4e4cc;
+    --amber-mid: #d4870f;
+    --teal: #1a5c52;
+    --teal-light: #daf0ec;
+    --purple: #4a3580;
+    --purple-light: #eae6f5;
+    --coral: #8c2e1a;
+    --coral-light: #f5e6e2;
+    --border: rgba(26,23,20,0.12);
+    --border-strong: rgba(26,23,20,0.25);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--paper);
+    color: var(--ink);
+    font-family: 'Noto Serif JP', serif;
+    font-size: 16px;
+    line-height: 1.95;
+    font-weight: 300;
+  }
+
+  /* ── Cover / Header ────────────────────────────── */
+  .cover {
+    background: var(--ink);
+    color: var(--paper);
+    padding: 5rem 3rem 4rem;
+    position: relative;
+    overflow: hidden;
+  }
+  .cover::before {
+    content: '';
+    position: absolute;
+    top: -60px; right: -60px;
+    width: 320px; height: 320px;
+    border-radius: 50%;
+    border: 1px solid rgba(247,243,238,0.08);
+  }
+  .cover::after {
+    content: '';
+    position: absolute;
+    bottom: -40px; left: -40px;
+    width: 220px; height: 220px;
+    border-radius: 50%;
+    border: 1px solid rgba(247,243,238,0.06);
+  }
+  .cover-inner {
+    max-width: 760px;
+    margin: 0 auto;
+    position: relative;
+    z-index: 1;
+  }
+  .cover-label {
+    font-family: 'Noto Sans JP', sans-serif;
+    font-size: 11px;
+    font-weight: 400;
+    letter-spacing: 0.18em;
+    color: rgba(247,243,238,0.5);
+    text-transform: uppercase;
+    margin-bottom: 2.5rem;
+  }
+  .cover-title {
+    font-family: 'Shippori Mincho', serif;
+    font-size: clamp(2rem, 5vw, 3.2rem);
+    font-weight: 700;
+    line-height: 1.35;
+    letter-spacing: 0.05em;
+    margin-bottom: 1.5rem;
+    color: var(--paper);
+  }
+  .cover-subtitle {
+    font-size: 1rem;
+    font-weight: 300;
+    color: rgba(247,243,238,0.65);
+    line-height: 1.8;
+    max-width: 560px;
+    margin-bottom: 3rem;
+    letter-spacing: 0.03em;
+  }
+  .cover-meta {
+    display: flex;
+    gap: 2rem;
+    border-top: 1px solid rgba(247,243,238,0.15);
+    padding-top: 1.5rem;
+  }
+  .cover-meta-item {
+    font-family: 'Noto Sans JP', sans-serif;
+    font-size: 11px;
+    color: rgba(247,243,238,0.45);
+    letter-spacing: 0.1em;
+  }
+  .cover-meta-item span {
+    display: block;
+    color: rgba(247,243,238,0.7);
+    font-size: 12px;
+    margin-top: 2px;
+  }
+
+  /* ── Navigation ────────────────────────────────── */
+  .nav {
+    background: var(--paper-2);
+    border-bottom: 1px solid var(--border);
+    padding: 0 3rem;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+  .nav-inner {
+    max-width: 760px;
+    margin: 0 auto;
+    display: flex;
+    gap: 0;
+    overflow-x: auto;
+  }
+  .nav-inner::-webkit-scrollbar { display: none; }
+  .nav a {
+    font-family: 'Noto Sans JP', sans-serif;
+    font-size: 12px;
+    font-weight: 400;
+    color: var(--ink-3);
+    text-decoration: none;
+    padding: 1rem 1.25rem;
+    display: block;
+    white-space: nowrap;
+    border-bottom: 2px solid transparent;
+    transition: color 0.2s, border-color 0.2s;
+    letter-spacing: 0.05em;
+  }
+  .nav a:hover {
+    color: var(--ink);
+    border-bottom-color: var(--amber-mid);
+  }
+
+  /* ── Main layout ───────────────────────────────── */
+  .main {
+    max-width: 760px;
+    margin: 0 auto;
+    padding: 0 3rem 5rem;
+  }
+
+  /* ── Sections ──────────────────────────────────── */
+  section {
+    padding: 4rem 0 0;
+  }
+  .section-num {
+    font-family: 'Noto Sans JP', sans-serif;
+    font-size: 11px;
+    font-weight: 400;
+    letter-spacing: 0.2em;
+    color: var(--amber);
+    margin-bottom: 0.75rem;
+    display: block;
+  }
+  h2 {
+    font-family: 'Shippori Mincho', serif;
+    font-size: 1.55rem;
+    font-weight: 700;
+    line-height: 1.45;
+    letter-spacing: 0.05em;
+    color: var(--ink);
+    margin-bottom: 1.75rem;
+    padding-bottom: 0.75rem;
+    border-bottom: 1px solid var(--border);
+  }
+  h3 {
+    font-family: 'Shippori Mincho', serif;
+    font-size: 1.1rem;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    color: var(--ink);
+    margin: 2.5rem 0 1rem;
+  }
+
+  p {
+    margin-bottom: 1.25rem;
+    letter-spacing: 0.03em;
+    color: var(--ink-2);
+  }
+  p + p { margin-top: 0; }
+
+  /* ── Callout boxes ─────────────────────────────── */
+  .callout {
+    border-left: 3px solid var(--amber-mid);
+    background: var(--amber-light);
+    padding: 1.25rem 1.5rem;
+    margin: 2rem 0;
+    border-radius: 0 6px 6px 0;
+  }
+  .callout-label {
+    font-family: 'Noto Sans JP', sans-serif;
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.18em;
+    color: var(--amber);
+    margin-bottom: 0.5rem;
+    text-transform: uppercase;
+  }
+  .callout p { color: var(--ink); margin-bottom: 0; font-size: 0.95rem; }
+
+  .callout.teal {
+    border-left-color: var(--teal);
+    background: var(--teal-light);
+  }
+  .callout.teal .callout-label { color: var(--teal); }
+
+  .callout.purple {
+    border-left-color: var(--purple);
+    background: var(--purple-light);
+  }
+  .callout.purple .callout-label { color: var(--purple); }
+
+  .callout.coral {
+    border-left-color: var(--coral);
+    background: var(--coral-light);
+  }
+  .callout.coral .callout-label { color: var(--coral); }
+
+  /* ── Tables ────────────────────────────────────── */
+  .table-wrap {
+    overflow-x: auto;
+    margin: 2rem 0;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+  }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.88rem;
+    font-family: 'Noto Sans JP', sans-serif;
+  }
+  thead tr {
+    background: var(--ink);
+    color: var(--paper);
+  }
+  thead th {
+    padding: 0.85rem 1.1rem;
+    text-align: left;
+    font-weight: 500;
+    letter-spacing: 0.05em;
+    font-size: 0.8rem;
+    white-space: nowrap;
+  }
+  tbody tr {
+    border-top: 1px solid var(--border);
+    transition: background 0.15s;
+  }
+  tbody tr:hover { background: var(--paper-2); }
+  tbody td {
+    padding: 0.9rem 1.1rem;
+    vertical-align: top;
+    line-height: 1.7;
+    color: var(--ink-2);
+  }
+  tbody td:first-child {
+    font-weight: 500;
+    color: var(--ink);
+    white-space: nowrap;
+  }
+
+  /* ── Comparison two-col ────────────────────────── */
+  .two-col {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.25rem;
+    margin: 2rem 0;
+  }
+  .col-box {
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 1.25rem 1.4rem;
+    background: var(--paper-2);
+  }
+  .col-box-title {
+    font-family: 'Noto Sans JP', sans-serif;
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.15em;
+    color: var(--ink-3);
+    margin-bottom: 0.75rem;
+    text-transform: uppercase;
+  }
+  .col-box p { font-size: 0.9rem; color: var(--ink-2); margin-bottom: 0.5rem; }
+  .col-box p:last-child { margin-bottom: 0; }
+
+  /* ── Case studies ──────────────────────────────── */
+  .case {
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    overflow: hidden;
+    margin: 2rem 0;
+  }
+  .case-header {
+    background: var(--paper-3);
+    padding: 1rem 1.4rem;
+    display: flex;
+    align-items: baseline;
+    gap: 1rem;
+    border-bottom: 1px solid var(--border);
+  }
+  .case-num {
+    font-family: 'Noto Sans JP', sans-serif;
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.15em;
+    color: var(--ink-3);
+    flex-shrink: 0;
+  }
+  .case-title {
+    font-family: 'Shippori Mincho', serif;
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--ink);
+  }
+  .case-body {
+    padding: 1.25rem 1.4rem;
+  }
+  .case-body p { font-size: 0.93rem; margin-bottom: 0.85rem; }
+  .case-body p:last-child { margin-bottom: 0; }
+  .case-tag {
+    display: inline-block;
+    font-family: 'Noto Sans JP', sans-serif;
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.1em;
+    padding: 3px 9px;
+    border-radius: 20px;
+    margin-bottom: 0.85rem;
+    text-transform: uppercase;
+  }
+  .tag-amber { background: var(--amber-light); color: var(--amber); }
+  .tag-teal  { background: var(--teal-light);  color: var(--teal);  }
+  .tag-purple{ background: var(--purple-light); color: var(--purple);}
+  .tag-coral { background: var(--coral-light);  color: var(--coral); }
+
+  /* ── Diagram ───────────────────────────────────── */
+  .diagram-wrap {
+    margin: 2.5rem 0;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 2rem 1.5rem;
+    background: var(--paper-2);
+  }
+  .diagram-caption {
+    font-family: 'Noto Sans JP', sans-serif;
+    font-size: 11px;
+    color: var(--ink-3);
+    text-align: center;
+    margin-top: 1.25rem;
+    letter-spacing: 0.08em;
+  }
+
+  /* ── Summary box ───────────────────────────────── */
+  .summary-box {
+    background: var(--ink);
+    color: var(--paper);
+    border-radius: 10px;
+    padding: 2.5rem 2.5rem;
+    margin: 3rem 0;
+  }
+  .summary-box-label {
+    font-family: 'Noto Sans JP', sans-serif;
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.2em;
+    color: var(--amber-mid);
+    margin-bottom: 1rem;
+    text-transform: uppercase;
+  }
+  .summary-box p {
+    font-size: 1.05rem;
+    line-height: 2.1;
+    color: rgba(247,243,238,0.88);
+    letter-spacing: 0.04em;
+    margin-bottom: 0;
+  }
+
+  /* ── Scope table rows ──────────────────────────── */
+  .scope-good  { color: var(--teal)  !important; font-weight: 500 !important; }
+  .scope-limit { color: var(--coral) !important; font-weight: 500 !important; }
+
+  /* ── Footer ────────────────────────────────────── */
+  footer {
+    background: var(--paper-3);
+    border-top: 1px solid var(--border);
+    padding: 2.5rem 3rem;
+    text-align: center;
+  }
+  footer p {
+    font-family: 'Noto Sans JP', sans-serif;
+    font-size: 11px;
+    color: var(--ink-3);
+    letter-spacing: 0.1em;
+    margin-bottom: 0;
+  }
+
+  /* ── Responsive ────────────────────────────────── */
+  @media (max-width: 600px) {
+    .cover { padding: 3.5rem 1.5rem 3rem; }
+    .main  { padding: 0 1.5rem 4rem; }
+    .nav   { padding: 0 1rem; }
+    .two-col { grid-template-columns: 1fr; }
+    footer { padding: 2rem 1.5rem; }
+    .cover-meta { flex-direction: column; gap: 1rem; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ────────────────── COVER ────────────────────── -->
+<header class="cover">
+  <div class="cover-inner">
+    <p class="cover-label">Narrative Theory · 物語論</p>
+    <h1 class="cover-title">求心的物語構造理論<br>設計と体験の二方向モデル</h1>
+    <p class="cover-subtitle">創作における感動の発生機序を「感情核への求心的設計」と「周縁から中心核への収束的体験」という二つのベクトルとして定式化する試み。アリストテレスの物語論・カーモードの終わりの感覚・ゲシュタルト心理学との接続を含む。さらに、同構造が学術研究の知的感動にも見られることを論じ、思想上の終端・始端としての世界秩序概念への接続を示す。</p>
+    <div class="cover-meta">
+      <div class="cover-meta-item">版<span>v1.3</span></div>
+      <div class="cover-meta-item">種別<span>理論的考察</span></div>
+      <div class="cover-meta-item">対象<span>創作・物語論・美学</span></div>
+      <div class="cover-meta-item">言語<span>日本語</span></div>
+    </div>
+  </div>
+</header>
+
+<!-- ────────────────── NAV ──────────────────────── -->
+<nav class="nav">
+  <div class="nav-inner">
+    <a href="#shinwa">理論の深化</a>
+    <a href="#gainen">概念化</a>
+    <a href="#jirei">事例</a>
+    <a href="#shasei">理論の射程</a>
+    <a href="#kakucho">理論の拡張</a>
+    <a href="#matome">まとめ</a>
+  </div>
+</nav>
+
+<!-- ────────────────── MAIN ─────────────────────── -->
+<main class="main">
+
+  <!-- ── 0. 概要 ── -->
+  <section id="gaiyou">
+    <span class="section-num">OVERVIEW</span>
+    <h2>理論の概要</h2>
+    <p>創作において感動が生まれる瞬間には、バラバラだった要素が一点へ向かって整然と結びつく感覚がある。この現象を説明するために、本理論は創作の構造を「作者側の求心的設計」と「受け手側の収束的体験」という二つの向きの運動として捉える。</p>
+    <p>作者は「感情核」——心が最も動かされる一点——を先に設計（あるいは書きながら発見）し、その点へ向かってすべての要素を逆算して配置する。受け手は逆に、周縁の断片から入り、霧の中を歩くように少しずつ意味を回収しながら中心核へ到達する。収束の瞬間、それまでの断片がすべて「最初からここへ向かっていた」と意味を書き換えられる。この体験こそが感動の本質である。</p>
+
+    <p>なお本理論では、創作における受け手の感情が最も動かされる一点を「感情核」と呼ぶ。研究・組織・共同体など創作以外の領域でも同じ収束構造が見られる場合、その領域横断的な収束の中心を「中心核」と呼んで区別する。</p>
+    <div class="diagram-wrap">
+      <svg width="100%" viewBox="0 0 680 640" role="img">
+        <title>求心的物語構造：設計と体験の二方向モデル</title>
+        <desc>上部に作者側（求心的設計）、中央に感情核と収束の瞬間、下部に受け手側（周縁から中心核への収束）を配置した構造図</desc>
+        <defs>
+          <marker id="arr" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+            <path d="M2 1L8 5L2 9" fill="none" stroke="context-stroke" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+          </marker>
+        </defs>
+        <style>
+          .svgt  { font-family:'Noto Sans JP',sans-serif; font-size:12px; fill:#3d3830; }
+          .svgth { font-family:'Noto Serif JP',serif; font-size:13px; font-weight:700; fill:#1a1714; }
+          .svgts { font-family:'Noto Sans JP',sans-serif; font-size:11px; fill:#6b6359; }
+          .svglabel { font-family:'Noto Sans JP',sans-serif; font-size:10px; letter-spacing:.1em; fill:#6b6359; }
+        </style>
+
+        <!-- Author label -->
+        <text class="svgth" x="340" y="26" text-anchor="middle">作者側：求心的設計</text>
+        <text class="svgts" x="340" y="44" text-anchor="middle">中心核から逆算して周辺を配置する</text>
+
+        <!-- Teal: author periphery boxes -->
+        <rect x="36"  y="62" width="150" height="54" rx="7" fill="#daf0ec" stroke="#1a5c52" stroke-width="0.6"/>
+        <text class="svgth" x="111" y="84" text-anchor="middle" dominant-baseline="central">登場人物の配置</text>
+        <text class="svgts" x="111" y="100" text-anchor="middle" dominant-baseline="central">性格・業・関係性</text>
+
+        <rect x="265" y="62" width="150" height="54" rx="7" fill="#daf0ec" stroke="#1a5c52" stroke-width="0.6"/>
+        <text class="svgth" x="340" y="84" text-anchor="middle" dominant-baseline="central">伏線・反復・対立</text>
+        <text class="svgts" x="340" y="100" text-anchor="middle" dominant-baseline="central">断片・違和感・沈黙</text>
+
+        <rect x="494" y="62" width="150" height="54" rx="7" fill="#daf0ec" stroke="#1a5c52" stroke-width="0.6"/>
+        <text class="svgth" x="569" y="84" text-anchor="middle" dominant-baseline="central">世界観・背景</text>
+        <text class="svgts" x="569" y="100" text-anchor="middle" dominant-baseline="central">空気・リズム・文脈</text>
+
+        <!-- Author arrows to center -->
+        <line x1="111" y1="116" x2="292" y2="210" stroke="#1a5c52" stroke-width="1" marker-end="url(#arr)" fill="none"/>
+        <line x1="340" y1="116" x2="340" y2="210" stroke="#1a5c52" stroke-width="1" marker-end="url(#arr)" fill="none"/>
+        <line x1="569" y1="116" x2="388" y2="210" stroke="#1a5c52" stroke-width="1" marker-end="url(#arr)" fill="none"/>
+        <text class="svglabel" x="174" y="168" text-anchor="middle">逆算・配置</text>
+        <text class="svglabel" x="506" y="168" text-anchor="middle">逆算・配置</text>
+
+        <!-- Emotional core (amber) -->
+        <rect x="212" y="220" width="256" height="78" rx="10" fill="#f4e4cc" stroke="#b5640a" stroke-width="1"/>
+        <text class="svgth" x="340" y="250" text-anchor="middle" dominant-baseline="central" style="font-size:14px">感情核</text>
+        <text class="svgts" x="340" y="274" text-anchor="middle" dominant-baseline="central">心が動かされる一点・収束の中心</text>
+
+        <!-- Disclaimer note -->
+        <line x1="468" y1="260" x2="522" y2="260" stroke="#6b6359" stroke-width="0.5" stroke-dasharray="3 3" fill="none"/>
+        <text class="svgts" x="526" y="254" dominant-baseline="central">※物語的クライマックスと</text>
+        <text class="svgts" x="526" y="269" dominant-baseline="central">　必ずしも一致しない</text>
+
+        <!-- Bridge label -->
+        <text class="svgts" x="340" y="326" text-anchor="middle">▼  受け手には「霧の中の道」として提示される</text>
+
+        <!-- Convergence moment (coral) -->
+        <rect x="203" y="345" width="274" height="60" rx="8" fill="#f5e6e2" stroke="#8c2e1a" stroke-width="0.7"/>
+        <text class="svgth" x="340" y="367" text-anchor="middle" dominant-baseline="central">収束の瞬間</text>
+        <text class="svgts" x="340" y="386" text-anchor="middle" dominant-baseline="central">「最初からここへ向かっていた」と気づく</text>
+
+        <!-- Arrow core → convergence -->
+        <line x1="340" y1="298" x2="340" y2="343" stroke="#b5640a" stroke-width="1.2" marker-end="url(#arr)" fill="none"/>
+
+        <!-- Aristotle annotation -->
+        <rect x="6" y="350" width="180" height="62" rx="7" fill="none" stroke="#6b6359" stroke-width="0.5" stroke-dasharray="4 3"/>
+        <text class="svgts" x="96" y="370" text-anchor="middle">アリストテレス</text>
+        <text class="svgts" x="96" y="386" text-anchor="middle">アナグノリシス（認知）</text>
+        <text class="svgts" x="96" y="402" text-anchor="middle">＋ ペリペテイア（逆転）</text>
+        <line x1="187" y1="375" x2="203" y2="375" stroke="#6b6359" stroke-width="0.5" stroke-dasharray="3 3" fill="none"/>
+
+        <!-- Kermode annotation -->
+        <rect x="494" y="350" width="180" height="62" rx="7" fill="none" stroke="#6b6359" stroke-width="0.5" stroke-dasharray="4 3"/>
+        <text class="svgts" x="584" y="370" text-anchor="middle">カーモード</text>
+        <text class="svgts" x="584" y="386" text-anchor="middle">「終わりの感覚」</text>
+        <text class="svgts" x="584" y="402" text-anchor="middle">結末が全体を遡及的に意味づける</text>
+        <line x1="493" y1="375" x2="477" y2="375" stroke="#6b6359" stroke-width="0.5" stroke-dasharray="3 3" fill="none"/>
+
+        <!-- Reader separator -->
+        <text class="svgts" x="340" y="440" text-anchor="middle">▲  受け手の収束の方向</text>
+
+        <!-- Reader periphery (purple) -->
+        <rect x="36"  y="456" width="150" height="54" rx="7" fill="#eae6f5" stroke="#4a3580" stroke-width="0.6"/>
+        <text class="svgth" x="111" y="476" text-anchor="middle" dominant-baseline="central">断片・日常・違和感</text>
+        <text class="svgts" x="111" y="494" text-anchor="middle" dominant-baseline="central">意味不明な手がかり</text>
+
+        <rect x="265" y="456" width="150" height="54" rx="7" fill="#eae6f5" stroke="#4a3580" stroke-width="0.6"/>
+        <text class="svgth" x="340" y="476" text-anchor="middle" dominant-baseline="central">感情の蓄積・方向づけ</text>
+        <text class="svgts" x="340" y="494" text-anchor="middle" dominant-baseline="central">期待・焦燥・共感</text>
+
+        <rect x="494" y="456" width="150" height="54" rx="7" fill="#eae6f5" stroke="#4a3580" stroke-width="0.6"/>
+        <text class="svgth" x="569" y="476" text-anchor="middle" dominant-baseline="central">反復・対称・予兆</text>
+        <text class="svgts" x="569" y="494" text-anchor="middle" dominant-baseline="central">パターンの知覚</text>
+
+        <!-- Reader arrows upward -->
+        <line x1="111" y1="456" x2="277" y2="407" stroke="#4a3580" stroke-width="1" marker-end="url(#arr)" fill="none"/>
+        <line x1="340" y1="456" x2="340" y2="407" stroke="#4a3580" stroke-width="1" marker-end="url(#arr)" fill="none"/>
+        <line x1="569" y1="456" x2="403" y2="407" stroke="#4a3580" stroke-width="1" marker-end="url(#arr)" fill="none"/>
+
+        <!-- Reader label -->
+        <text class="svgth" x="340" y="538" text-anchor="middle">受け手側：周縁から中心核への収束</text>
+        <text class="svgts" x="340" y="556" text-anchor="middle">断片を辿りながら意味を回収し、中心核へ到達する</text>
+      </svg>
+      <p class="diagram-caption">図1：設計の求心性と体験の収束性——二方向モデル</p>
+    </div>
+  </section>
+
+  <!-- ── 2. 理論の深化 ── -->
+  <section id="shinwa">
+    <span class="section-num">SECTION 01</span>
+    <h2>理論の深化</h2>
+
+    <h3>受け手の体験：霧の中の道</h3>
+    <p>受け手の体験を適切に表す比喩は「霧の中の道」である。受け手は常に正しい道を歩いている。ただし視界は限られており、全体像が見えていない。各断片は行き止まりではなく、不完全ながらも常に何かを示しながら受け手を中心核へ向かわせる。</p>
+    <div class="callout teal">
+      <p class="callout-label">修正後の比喩</p>
+      <p>「霧の中の山道」。道は常に存在し、足元は踏みしめられている。しかし視界は数十メートルしかない。山頂（感情核）に到達した瞬間、霧が晴れ、歩いてきた道全体が一望できる——これが「最初からここへ向かっていた」という感覚の正体である。</p>
+    </div>
+
+    <h3>感情核と物語的クライマックスの分離</h3>
+    <p>二つの概念を明確に区別する。物語的クライマックスとはプロット上の出来事の頂点であり、感情核とは読者の感情が最大に動かされる瞬間である。多くの場合これらは近接するが、同一ではない。</p>
+    <div class="two-col">
+      <div class="col-box">
+        <p class="col-box-title">物語的クライマックス</p>
+        <p>プロット上の事件・転換点の頂点。主人公が決断する場面、対決の瞬間、事態の急転など。</p>
+        <p>例：ハムレットの決闘場面</p>
+      </div>
+      <div class="col-box">
+        <p class="col-box-title">感情核</p>
+        <p>読者の感情が最大に動かされる瞬間。作者が設計する場合と受け手によって異なる場合がある。</p>
+        <p>例：ハムレットの「To be or not to be」、墓場の場面</p>
+      </div>
+    </div>
+    <p>この認識は理論を豊かにする。作者は「感情核の候補」を複数仕込み、受け手はそのどれかと共鳴することで収束体験を得る、という多層的な構造が見えてくる。</p>
+
+    <div class="callout teal">
+      <p class="callout-label">補注：感情核の記述の基底</p>
+      <p>感情核は作者が設計する概念だが、その存在は受け手の解釈体験から逆算して記述される。「この作品の感情核はここにある」という記述は、受け手においてそれまでの断片が一点へと収束したという体験を起点に、設計側へ遡行した記述である。感情核がテクストに独立した実体として内在するというより、受け手の収束体験を可能にする条件の総体を指す概念として扱うほうが正確である。作者の設計とは、その条件の構成である。「感情核は作者が設計する」という本理論の立場と「感情核の確認は受け手の体験から逆算される」という補注は矛盾しない——前者は設計の方向を、後者は確認の方向を述べている。</p>
+    </div>
+
+    <h3>中心核と周辺要素の関係：主従なき秩序</h3>
+    <p>ここで重要な限定を加える。感情核あるいは中心核は、周辺要素を支配する「主」ではない。中心核とは、それにまつわるあらゆる要素のもう一つの側面として立ち現れるものであり、周辺要素と中心核の間に本質的な主従関係はない。</p>
+    <div class="callout teal">
+      <p class="callout-label">創作への含意</p>
+      <p>キャラクター一つ、背景の描写、一言のセリフ——いかなる要素も、他の要素を秩序づける中心核たりえる。中心核はあらかじめ定められた特権的な要素ではなく、作者あるいは受け手の視点がそこに定まったとき、事後的にその地位を得る。これはすべての創作要素に等しく可能性を開く。</p>
+    </div>
+
+    <h3>設計先行型と発見型の統合</h3>
+    <div class="two-col">
+      <div class="col-box">
+        <p class="col-box-title">設計先行型</p>
+        <p>まず感情核を置き、そこから逆算して全体を組む。カフカや黒澤明の絵コンテ型制作がこれに近い。意図的・建築的な構築。</p>
+      </div>
+      <div class="col-box">
+        <p class="col-box-title">発見型</p>
+        <p>書き進める中で中心核を発見する。ドストエフスキーは草稿段階で人物の性格が変わることが多かった。事後的に構造を整える。</p>
+      </div>
+    </div>
+    <div class="callout">
+      <p class="callout-label">統合的見解</p>
+      <p>重要なのはプロセスではなく、最終的に作品が求心構造を持つかどうかである。設計先行型はその構造を意図的に作り、発見型は草稿の多くを捨てるか事後的に整えることで実現する。どちらも読者体験においては同じ収束感をもたらしうる。</p>
+    </div>
+
+    <h3>世界の閉包と中心核の連鎖</h3>
+    <p>ある中心核に到達したとき、残る要素がその核に回収されるか、次の核へ自然に接続されることで、作品は閉じる。しかしいずれも起きなければ、以下の三種の違和感として知覚される。</p>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>問題</th><th>内容</th></tr></thead>
+        <tbody>
+          <tr>
+            <td>尻切れトンボ</td>
+            <td>中心核に到達したにもかかわらず、周辺要素の収束が不十分で終結感が生じない</td>
+          </tr>
+          <tr>
+            <td>蛇足</td>
+            <td>すでに閉じた世界に余分な延長が加わり、閉包が壊れる</td>
+          </tr>
+          <tr>
+            <td>伏線未回収</td>
+            <td>途中で示された方向性が最後まで意味づけされず、残余として残る</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <p>探索の末に中心核へ到達し霧が晴れたとき、受容者は元の現実へ容易に帰還できる。終結とは単一の中心核への完全収束によって決まるのではなく、受容者が「ここで閉じる」と節目を措定することで成立する。したがって複数の中心核がありうる長編においても、ある一点を終結として定めることで作品は閉じうる。長編では実際には、ある中心核への到達点が次の中心核を指し示し、世界は「一回閉じながら次へ開く」形で連鎖する。この連鎖が自然に見えるのは、次の中心核の素材があらかじめ周辺に薄く配置されているためである。</p>
+    <div class="callout coral">
+      <p class="callout-label">デウス・エクス・マキナの定義</p>
+      <p>デウス・エクス・マキナとは、世界内部で育った次の中心核ではなく、外部から突然挿入されて収束を代行するものである。それまでの内部構造から必然化されていない解決であるため、世界の閉包感と遡及的必然を弱める。アリストテレスは『詩学』第15章でこれを批判し、解決は物語の内部から生じなければならないと述べている。</p>
+    </div>
+
+    <h3>感情の発現と秩序の同時的立ち上がり</h3>
+    <p>ここで確認しておくべき重要な限定がある。感情核や中心核は、受容者を能動的に呼び込んだり、感情を外から注入したりするのではない。受容者がその核へ到達したとき、周辺の要素がその核のために秩序づけられていたことが遡及的に気づかれ、感情が同時に立ち上がる。</p>
+    <div class="callout">
+      <p class="callout-label">感情発現の機序</p>
+      <p>感動や悪感情は、対象が外から一方的に注入するのではなく、主体が気づきによって秩序や配置を認知したときに立ち上がる。そのとき現れる感情の性質は中心核の内容によって異なり、快い感動にも不快な感情にもなりうる。したがって、ここで確認できるのは秩序と感情の同時的立ち上がりまでであり、その因果関係はなお留保される。</p>
+    </div>
+
+    <div class="callout">
+      <p class="callout-label">補注：収束体験の様式（引っかかりと着地）</p>
+      <p>収束の瞬間は受け手において「引っかかり（違和感・予期との不一致）の解消」として経験される。解消の様式は作品の目的に応じて異なる。論文・プレゼン等の説明型では、引っかかりが最終的に明示的に解消される形が主流となる。叙情的作品では、引っかかりが意図的に未解消のまま余韻として持続する形が選ばれることもある。感情核の「設計」とは、どの様式での解消を目指すかの選択でもあり、この選択が収束感の強度と質を左右する。本理論が記述する「感情核への収束」は第一の明示型に対応するが、第二の開放型もまた引っかかりと着地の構造を内包した別の有効な形式である。</p>
+    </div>
+  </section>
+
+  <!-- ── 3. 概念化 ── -->
+  <section id="gainen">
+    <span class="section-num">SECTION 02</span>
+    <h2>概念化：既存理論との対応</h2>
+
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>本理論の概念</th>
+            <th>対応する既存概念</th>
+            <th>出典</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>中心核への収束・遡及的必然</td>
+            <td>アナグノリシス（ἀναγνώρισις）＝認知・発見</td>
+            <td>アリストテレス『詩学』第11章</td>
+          </tr>
+          <tr>
+            <td>感情の蓄積と解放</td>
+            <td>カタルシス（κάθαρσις）</td>
+            <td>アリストテレス『詩学』第6章</td>
+          </tr>
+          <tr>
+            <td>運命の転換点</td>
+            <td>ペリペテイア（περιπέτεια）＝逆転</td>
+            <td>アリストテレス『詩学』第11章</td>
+          </tr>
+          <tr>
+            <td>結末が全体に遡及的な意味を与える</td>
+            <td>終わりの感覚（The Sense of an Ending）</td>
+            <td>フランク・カーモード『The Sense of an Ending: Studies in the Theory of Fiction』（1967年）</td>
+          </tr>
+          <tr>
+            <td>断片が全体として意味をなす瞬間</td>
+            <td>プレグナンツ法則（全体は部分の和を超える）</td>
+            <td>ゲシュタルト心理学</td>
+          </tr>
+          <tr>
+            <td>中心核への方向づけ</td>
+            <td>テレオロジカル・リスニング（目的論的聴取）</td>
+            <td>音楽学・アドルノほか</td>
+          </tr>
+          <tr>
+            <td>作者による要素の配置・構成</td>
+            <td>ミュトス（μῦθος）＝プロット</td>
+            <td>アリストテレス『詩学』</td>
+          </tr>
+          <tr>
+            <td>偶然ではなく必然として語る</td>
+            <td>蓋然性（εἰκός）と必然性（ἀνάγκη）の優位</td>
+            <td>アリストテレス『詩学』第9章</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="callout purple">
+      <p class="callout-label">重要な対応：アナグノリシス</p>
+      <p>アリストテレスが『詩学』で最高の劇的要素として挙げるアナグノリシス（認知・発見）は、本理論の「収束の瞬間」に正確に対応する。それまで知らなかった真実が明らかになる瞬間——これはプロット的事件であるとともに、読者にとっての「すべてが整列していたと気づく」体験でもある。アリストテレスによれば、アナグノリシス（認知・発見）とペリペテイア（逆転）が結びつくとき、悲劇的効果は特に強くなる。</p>
+    </div>
+  </section>
+
+  <!-- ── 4. 事例 ── -->
+  <section id="jirei">
+    <span class="section-num">SECTION 03</span>
+    <h2>事例による検証</h2>
+
+    <div class="case">
+      <div class="case-header">
+        <span class="case-num">事例 01</span>
+        <span class="case-title">ソポクレス「オイディプス王」（紀元前429年頃）</span>
+      </div>
+      <div class="case-body">
+        <span class="case-tag tag-teal">アナグノリシス＋ペリペテイアの一致</span>
+        <p>アリストテレスが『詩学』でアナグノリシスとペリペテイアの最良の例として挙げた作品。感情核は、オイディプスが調査の末に「探している犯人が自分自身である」と知る瞬間である。</p>
+        <p>求心的設計の観点では、舞台の外で既に起きていた事件（神託・旅の出来事）がすべて現在の一点へ向かって収束する。観客はイロニカルな優位性（観客は真実を知っているがオイディプスは知らない）を持ちながら物語を追う。だからこそ収束の瞬間の衝撃は二重になる——「やはりそうだった」ではなく「ここまで来てしまった」という感覚。</p>
+        <p>また、物語的クライマックス（真実の発覚）と感情核（認識の瞬間）がここでは完全に一致する稀な例でもある。</p>
+      </div>
+    </div>
+
+    <div class="case">
+      <div class="case-header">
+        <span class="case-num">事例 02</span>
+        <span class="case-title">映画「シックス・センス」（M.ナイト・シャマラン、1999年）</span>
+      </div>
+      <div class="case-body">
+        <span class="case-tag tag-amber">遡及的必然の純粋な演出</span>
+        <p>現代において求心的構造と遡及的必然を最も意識的に設計した例の一つ。感情核はエンディングの認知の瞬間である。</p>
+        <p>観客はその後、既に見た全シーンを自動的に再解釈する。医師が妻と食事するシーン、子どもとの会話、ドアノブに触れない場面——初見では「何気ない描写」だったものが、中心核到達後に「この瞬間のために置かれていた」と意味を変える。</p>
+        <p>物語が時間的に一方向に進みながら、意味は逆方向に書き換えられるという構造を可視化した典型例。カーモードの「終わりの感覚」がそのまま映画技法として実装されている。</p>
+      </div>
+    </div>
+
+    <div class="case">
+      <div class="case-header">
+        <span class="case-num">事例 03</span>
+        <span class="case-title">ベートーヴェン 交響曲第9番（1824年）</span>
+      </div>
+      <div class="case-body">
+        <span class="case-tag tag-purple">物語形式ではない求心的構造</span>
+        <p>物語形式ではないが、求心的設計の音楽的実例として有効。第1〜第3楽章はそれぞれ完結した楽章だが、第4楽章冒頭で低弦が過去の楽章の断片を引用し、それらを「否定」するように走り去っていく。そして人声による合唱が入る瞬間、それまでの全楽章が「この瞬間へ向かうための準備」として再定義される。</p>
+        <p>目的論的聴取（teleological listening）の観点では、全楽章が合唱という感情核へ向かって設計されている。登山の比喩も成立する——3つの楽章という「道中」が、頂上の眺望の意味を決定している。</p>
+      </div>
+    </div>
+
+    <div class="case">
+      <div class="case-header">
+        <span class="case-num">事例 04</span>
+        <span class="case-title">ドストエフスキー「罪と罰」（1866年）</span>
+      </div>
+      <div class="case-body">
+        <span class="case-tag tag-coral">感情核とクライマックスの分離</span>
+        <p>感情核が単一のシーンではなく「状態」である例として重要。中心核はラスコーリニコフの精神的崩壊と自白の過程であり、物語全体はこの一点へ向かう心理的圧力の積み重ねとして設計されている。</p>
+        <p>殺人は第1部で起きる（物語的クライマックスの前倒し）が、感情的な収束はエピローグの直前まで延期される。ここでは物語的クライマックスと感情核が大きく分離しており、「二つの概念は必ずしも一致しない」という点を具体的に示す。</p>
+        <p>また、これは発見型創作の例でもある。ドストエフスキーは草稿段階でラスコーリニコフの人物像を大幅に変更しており、中心核を書きながら発見・確立していった。</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── 5. 射程 ── -->
+  <section id="shasei">
+    <span class="section-num">SECTION 04</span>
+    <h2>理論の射程と限界</h2>
+
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>適用対象</th><th>適合度</th><th>備考</th></tr></thead>
+        <tbody>
+          <tr>
+            <td>プロット駆動型の物語（小説・映画・戯曲）</td>
+            <td class="scope-good">◎ 最も適合</td>
+            <td>理論の主たる対象領域</td>
+          </tr>
+          <tr>
+            <td>交響曲・ソナタ形式の音楽</td>
+            <td class="scope-good">○ 適合</td>
+            <td>目的論的聴取として適用可能</td>
+          </tr>
+          <tr>
+            <td>ライブ・登山などの体験</td>
+            <td class="scope-good">○ 類比適用</td>
+            <td>理論の「身体版」として類比的に成立</td>
+          </tr>
+          <tr>
+            <td>叙情詩・随筆</td>
+            <td class="scope-limit">△ 部分適用</td>
+            <td>時間的収束過程がない。意味の「凝縮」として読み替えが必要</td>
+          </tr>
+          <tr>
+            <td>多声的・脱中心的な作品（ポストモダン小説等）</td>
+            <td class="scope-limit">△ 限定適用</td>
+            <td>単一中心核モデルでは説明困難。複数核モデルへの拡張が必要</td>
+          </tr>
+          <tr>
+            <td>学術研究（仮説・発見・法則化）</td>
+            <td class="scope-good">○ 構造的同型</td>
+            <td>中心核への収束という構造を共有する。ただし「発見」と「配置」の順序が創作と逆向きに現れる点で区別される</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- ── 6. 理論の拡張 ── -->
+  <section id="kakucho">
+    <span class="section-num">SECTION 05</span>
+    <h2>理論の拡張：創作・研究・世界観の接続</h2>
+
+    <h3>学術研究との構造的同型性</h3>
+    <p>学術研究における知的感動——発見の喜び、法則化の達成感、知的好奇心の充足——もまた、本理論が記述する収束構造によって説明できる。ばらばらに見えていた資料・データが、ある共通の構造や原理を持つと見えてくる瞬間がある。そしてその構造の中心に、仮説・法則・発明が立ち上がる。さらに重要なのは、その到達過程自体が再現可能であることが確認されるという点だ。</p>
+    <p>これは単に「答えが見つかった」という喜びではない。世界の中に秩序があることが確認された、という感動である。この感動は、創作における「最初からここへ向かっていた」という感覚と構造上同じものである。</p>
+    <div class="callout teal">
+      <p class="callout-label">重要な含意</p>
+      <p>この構造的同型性が示しているのは、創作物の再現（設計・コピー・オマージュ）だけでなく、創作プロセス自体の再現・設計が可能だということである。中心核をもとに世界を作る（創作）と、世界の中心核を発見する（研究）は、向きが逆でありながら同じ構造の両面をなしている。</p>
+    </div>
+
+    <h3>研究結果の再現とプロセスの再現</h3>
+    <p>創作においては、世界観・設定・語りの形式を通じて、作者は感情核へ至るプロセスそのものを設計してきた。読み手はその設計された道筋を歩くことで感動へと導かれる。重要なのは、このことが学術研究にも拡張可能だという点である。</p>
+    <p>従来の学術研究は、主流的な評価・教育実践において、結果の再現に重点を置いてきた。客観性の確保という観点からこの傾向は理解できる。しかしその一方で、仮説がどのように立ち上がり、どの資料がどの順序で収集され、どの地点で発見の感動が生じたのかという生成の経路は、相対的に軽視されやすかった。</p>
+    <p>教育・研修の観点では、結果だけを伝えても十分ではない。中心核へ至るプロセスそのものを再現できるようにすることで、学習者は「何が正しいか」だけでなく、「どうやって発見に至るか」を学べる。研究における感動は副次的な装飾ではなく、知的探究を持続させる実質的な推進力である。これを伝達可能なものとして設計することが、研究教育における次の課題となる。</p>
+
+    <h3>相互プロセスとしての探索と配置</h3>
+    <p>本理論のこれまでの記述では、「設計先行型」と「発見型」という二類型を区別してきた。しかしここで一点精密化が必要である。表現や発表という外向きの順序と、作者・研究者の内部での探索の順序は、必ずしも一致しない。</p>
+    <div class="two-col">
+      <div class="col-box">
+        <p class="col-box-title">創作における内部探索</p>
+        <p>作品が外に出てくる前に、創作者の内部ではすでに中心核へ向かう探索が進んでいることがある。「書きながら発見する」型であっても、表現以前の思索の中ですでに中心核の仮置きが起きている場合がある。</p>
+      </div>
+      <div class="col-box">
+        <p class="col-box-title">研究における仮説先行</p>
+        <p>学術研究も「事後的に発見するだけ」ではない。仮説思考のように、先に中心核のありかをあたりをつけてから証拠を集める手続きが広く用いられる。発見型と設計先行型の区別は、研究においても同様に成立する。</p>
+      </div>
+    </div>
+    <div class="callout">
+      <p class="callout-label">相互プロセスの要点</p>
+      <p>創作も研究も、「中心核を先に置く」か「あとから発見する」かの一方向の作業ではない。実際には、中心核の探索・仮置き・検証・再配置が往復する相互プロセスである。ただし、この「相互性」は単純な対称性を意味しない——創作と研究では、中心核と周辺の関係において、探索と配置の重心が異なる。</p>
+    </div>
+
+    <h3>思想上の終端・始端：世界秩序という極限概念</h3>
+    <p>創作や研究において要素が中心核へ収束するとき、思想の水準では、その中心核や秩序の根拠がさらに上位の原理として問われる。この問いへの応答として歴史的に現れてきたのが、神による宇宙秩序や自然摂理という観念である。</p>
+    <div class="callout purple">
+      <p class="callout-label">思想上の位置づけ（経験的主張ではない）</p>
+      <p>これらは経験的な作業の説明ではなく、収束構造の根拠に関する思想上の極限概念として機能する。「世界は最初から秩序を持つ」「その秩序が中心核へと導く」「中心核は偶然ではなく必然として現れる」——これらの命題は、創作・研究における収束体験を、世界全体の側から保証するものとして思想史上に繰り返し登場してきた。本理論はこの問いに踏み込まないが、収束構造の普遍性が思想的に問われる余地があることは確認しておく。</p>
+    </div>
+
+
+    <h3>階層的求心性と多層中心構造</h3>
+    <p>収束する中心核は単一ではなく、多層的である。下位の中心核は、より上位の中心核によって秩序づけられ、その配置に優先順位が与えられる。この構造を階層的求心性と呼ぶ。</p>
+    <p>プロジェクト管理におけるマイルストーンは、この構造のアナロジーとして有効である。各マイルストーンは下位の中心核として機能し、最終成果物（上位の中心核）へ向かって配置される。作品における中間的なクライマックスが次の展開を方向づけるのと、構造上同じ原理が働いている。</p>
+    <div class="callout">
+      <p class="callout-label">類比の拡張（アナロジーとして）</p>
+      <p>組織・宗教団体・軍隊・共同体もまた、中心核をもとに秩序づけられた配列として見ることができる。上位の中心核（使命・理念・指令）が下位の核（部門目標・規律・役割）を秩序づけ、メンバーに帰属感・誇り・競争意欲・使命感を引き起こす。感情の高揚と秩序の形成が同じ求心的原理のもとで生起しているという点は、創作における感動の発生と構造上同型である。なお、この類比は構造的対応の指摘であり、各領域の等値を主張するものではない。</p>
+    </div>
+
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>水準</th><th>中心核への収束</th><th>向き</th></tr></thead>
+        <tbody>
+          <tr>
+            <td>創作</td>
+            <td>感情核を中心に周辺要素を配置・収束させる</td>
+            <td>配置↔探索（往復）</td>
+          </tr>
+          <tr>
+            <td>学術研究</td>
+            <td>法則・原理という中心核を周辺事実から発見・確認する</td>
+            <td>発見↔仮説（往復）</td>
+          </tr>
+          <tr>
+            <td>思想・世界観</td>
+            <td>神・摂理・必然という極限概念が秩序全体を根拠づける</td>
+            <td>始端かつ終端（極限）</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- ── 7. まとめ ── -->
+  <section id="matome">
+    <span class="section-num">SECTION 06</span>
+    <h2>理論のまとめ</h2>
+
+    <p>以下に、この理論を構成する主要な命題を整理する。</p>
+
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>命題</th><th>内容</th></tr></thead>
+        <tbody>
+          <tr>
+            <td>感情核の先行性</td>
+            <td>創作における感動の発生源は「感情核」——受け手の心が最も動かされる一点——であり、作者はこれを先に設定する（または書きながら発見する）</td>
+          </tr>
+          <tr>
+            <td>求心的設計</td>
+            <td>作者は感情核から逆算して、登場人物・伏線・背景・沈黙など全要素を配置する。すべての要素は、到達後に感情核のために秩序づけられていたと理解されるよう配置される</td>
+          </tr>
+          <tr>
+            <td>霧の中の道</td>
+            <td>受け手は周縁の断片から入り、霧の中の道を歩くように少しずつ意味を回収しながら中心核へ向かう。道は存在するが全体像は見えない</td>
+          </tr>
+          <tr>
+            <td>収束の瞬間</td>
+            <td>感情核に到達した瞬間、それまでの断片がすべて「最初からここへ向かっていた」と意味を書き換えられる。これがアリストテレスのいうアナグノリシス（認知・発見）に対応する</td>
+          </tr>
+          <tr>
+            <td>遡及的必然</td>
+            <td>収束後、過去の要素は「必然だった」と感じられる。これは単なる因果関係ではなく、カーモードのいう「結末による遡及的な意味づけ」である</td>
+          </tr>
+          <tr>
+            <td>感情核≠クライマックス</td>
+            <td>物語的クライマックスと感情核は必ずしも一致しない。作者は感情核の候補を複数設計することができ、受け手はそのいずれかと共鳴する</td>
+          </tr>
+          <tr>
+            <td>階層的求心性</td>
+            <td>中心核は単一ではなく多層的である。上位の中心核が下位の中心核を秩序づけ、配置に優先順位を与える。この構造は作品・研究・組織・共同体に共通して見られる</td>
+          </tr>
+          <tr>
+            <td>世界の閉包と連鎖</td>
+            <td>ある中心核への到達後、残余が回収されるか次の核へ接続されることで世界は閉じる。回収も接続も起きない残余が尻切れトンボ・蛇足・伏線未回収として知覚される。デウス・エクス・マキナは外部からの挿入によって閉包感を弱める</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="summary-box">
+      <p class="summary-box-label">一文要約</p>
+      <p>創作とは、感情核を先に設定し（または書きながら発見し）、受け手には周縁の断片から霧の中の道を歩かせ、最後に全体が一つの必然として立ち上がって見えるよう仕組まれた構造である——収束の瞬間に起きるのは、アリストテレスのいうアナグノリシスと、カーモードのいう結末の遡及的意味づけが重なる体験である。</p>
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  <p>求心的物語構造理論 ── 設計と体験の二方向モデル</p>
+  <p style="margin-top:0.5rem">v1.1（2026年）：SECTION 01・05の重複箇所を修正・統合。用語（中核→中心核）を統一。<br>v1.2（2026年）：中心核と周辺要素の関係（主従なき秩序）を SECTION 01 に追加。<br>v1.3（2026年）：SECTION 01 に補注「感情核の記述の基底」を追加（感情核は受け手の収束体験から逆算して記述されるという視点の補完）。SECTION 01 に補注「収束体験の様式（引っかかりと着地）」を追加（解消の様式による収束感の差異を記述）。いずれも「感情核は作者が設計する」という本理論の立場を変更せず、受け手側記述の空白を補完する最小限の追記。</p>
+</footer>
+
+</body>
+</html>

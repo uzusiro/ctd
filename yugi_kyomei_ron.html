@@ -1,0 +1,889 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>遊戯共鳴論——受容者内核説 v1.3</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@300;400;500;700&family=Shippori+Mincho:wght@400;500;700&family=Noto+Sans+JP:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink: #1a1714;
+    --ink-2: #3d3830;
+    --ink-3: #6b6359;
+    --paper: #f7f3ee;
+    --paper-2: #ede8e1;
+    --paper-3: #e2dbd1;
+    --border: rgba(26,23,20,0.12);
+    --border-strong: rgba(26,23,20,0.25);
+    /* Primary accent: deep violet ── contrasts with centripetal theory's amber */
+    --violet: #3d3480;
+    --violet-light: #eae8f5;
+    --violet-mid: #5b529c;
+    --violet-dark: #2a2460;
+    /* Secondary accents */
+    --teal: #1a5c52;
+    --teal-light: #daf0ec;
+    --amber: #b5640a;
+    --amber-light: #f4e4cc;
+    --amber-mid: #d4870f;
+    --coral: #8c2e1a;
+    --coral-light: #f5e6e2;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--paper);
+    color: var(--ink);
+    font-family: 'Noto Serif JP', serif;
+    font-size: 16px;
+    line-height: 1.95;
+    font-weight: 300;
+  }
+
+  /* ── Cover ────────────────────────────── */
+  .cover {
+    background: var(--violet-dark);
+    color: var(--paper);
+    padding: 5rem 3rem 4rem;
+    position: relative;
+    overflow: hidden;
+  }
+  .cover::before {
+    content: '';
+    position: absolute;
+    top: -80px; right: -80px;
+    width: 360px; height: 360px;
+    border-radius: 50%;
+    border: 1px solid rgba(234,232,245,0.08);
+  }
+  .cover::after {
+    content: '';
+    position: absolute;
+    bottom: -50px; left: -50px;
+    width: 250px; height: 250px;
+    border-radius: 50%;
+    border: 1px solid rgba(234,232,245,0.05);
+  }
+  .cover::before { animation: none; }
+  .cover-ring {
+    position: absolute;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    width: 700px; height: 700px;
+    border-radius: 50%;
+    border: 1px solid rgba(234,232,245,0.04);
+    pointer-events: none;
+  }
+  .cover-inner { max-width: 760px; margin: 0 auto; position: relative; z-index: 1; }
+  .cover-label {
+    font-family: 'Noto Sans JP', sans-serif;
+    font-size: 11px;
+    letter-spacing: 0.18em;
+    color: rgba(234,232,245,0.45);
+    text-transform: uppercase;
+    margin-bottom: 2.5rem;
+  }
+  .cover-title {
+    font-family: 'Shippori Mincho', serif;
+    font-size: clamp(2rem, 5vw, 3.4rem);
+    font-weight: 700;
+    line-height: 1.3;
+    letter-spacing: 0.06em;
+    margin-bottom: 0.5rem;
+    color: #f0eeff;
+  }
+  .cover-subtitle-ja {
+    font-family: 'Noto Serif JP', serif;
+    font-size: 1rem;
+    font-weight: 300;
+    letter-spacing: 0.08em;
+    color: rgba(234,232,245,0.6);
+    margin-bottom: 1.75rem;
+  }
+  .cover-subtitle {
+    font-size: 0.93rem;
+    font-weight: 300;
+    color: rgba(234,232,245,0.58);
+    line-height: 1.85;
+    max-width: 560px;
+    margin-bottom: 3rem;
+    letter-spacing: 0.02em;
+  }
+  .cover-meta {
+    display: flex;
+    gap: 2rem;
+    border-top: 1px solid rgba(234,232,245,0.14);
+    padding-top: 1.5rem;
+  }
+  .cover-meta-item {
+    font-family: 'Noto Sans JP', sans-serif;
+    font-size: 11px;
+    color: rgba(234,232,245,0.38);
+    letter-spacing: 0.1em;
+  }
+  .cover-meta-item span {
+    display: block;
+    color: rgba(234,232,245,0.65);
+    font-size: 12px;
+    margin-top: 2px;
+  }
+
+  /* ── Navigation ────────────────────────── */
+  .nav {
+    background: var(--paper-2);
+    border-bottom: 1px solid var(--border);
+    padding: 0 3rem;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+  .nav-inner {
+    max-width: 760px;
+    margin: 0 auto;
+    display: flex;
+    gap: 0;
+    overflow-x: auto;
+  }
+  .nav-inner::-webkit-scrollbar { display: none; }
+  .nav a {
+    font-family: 'Noto Sans JP', sans-serif;
+    font-size: 12px;
+    color: var(--ink-3);
+    text-decoration: none;
+    padding: 1rem 1.15rem;
+    display: block;
+    white-space: nowrap;
+    border-bottom: 2px solid transparent;
+    transition: color 0.2s, border-color 0.2s;
+    letter-spacing: 0.04em;
+  }
+  .nav a:hover { color: var(--violet); border-bottom-color: var(--violet-mid); }
+
+  /* ── Main layout ────────────────────────── */
+  .main { max-width: 760px; margin: 0 auto; padding: 0 3rem 5rem; }
+
+  /* ── Sections ───────────────────────────── */
+  section { padding: 4rem 0 0; }
+  .section-num {
+    font-family: 'Noto Sans JP', sans-serif;
+    font-size: 11px;
+    letter-spacing: 0.2em;
+    color: var(--violet);
+    margin-bottom: 0.75rem;
+    display: block;
+  }
+  h2 {
+    font-family: 'Shippori Mincho', serif;
+    font-size: 1.55rem;
+    font-weight: 700;
+    line-height: 1.45;
+    letter-spacing: 0.05em;
+    color: var(--ink);
+    margin-bottom: 1.75rem;
+    padding-bottom: 0.75rem;
+    border-bottom: 1px solid var(--border);
+  }
+  h3 {
+    font-family: 'Shippori Mincho', serif;
+    font-size: 1.1rem;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    color: var(--ink);
+    margin: 2.5rem 0 1rem;
+  }
+  p { margin-bottom: 1.25rem; letter-spacing: 0.03em; color: var(--ink-2); }
+  p + p { margin-top: 0; }
+  strong { color: var(--ink); font-weight: 500; }
+
+  /* ── Callouts ───────────────────────────── */
+  .callout {
+    border-left: 3px solid var(--violet-mid);
+    background: var(--violet-light);
+    padding: 1.25rem 1.5rem;
+    margin: 2rem 0;
+    border-radius: 0 6px 6px 0;
+  }
+  .callout-label {
+    font-family: 'Noto Sans JP', sans-serif;
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.18em;
+    color: var(--violet);
+    margin-bottom: 0.5rem;
+    text-transform: uppercase;
+  }
+  .callout p { color: var(--ink); margin-bottom: 0; font-size: 0.93rem; }
+  .callout.teal { border-left-color: var(--teal); background: var(--teal-light); }
+  .callout.teal .callout-label { color: var(--teal); }
+  .callout.amber { border-left-color: var(--amber); background: var(--amber-light); }
+  .callout.amber .callout-label { color: var(--amber); }
+  .callout.coral { border-left-color: var(--coral); background: var(--coral-light); }
+  .callout.coral .callout-label { color: var(--coral); }
+
+  /* ── Term definition ────────────────────── */
+  .term-def {
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--violet);
+    padding: 1.2rem 1.5rem;
+    margin: 1.75rem 0;
+    background: var(--paper-2);
+    border-radius: 0 8px 8px 0;
+  }
+  .term-def-word {
+    font-family: 'Shippori Mincho', serif;
+    font-size: 1.08rem;
+    font-weight: 700;
+    color: var(--ink);
+    margin-bottom: 0.2rem;
+  }
+  .term-def-read {
+    font-family: 'Noto Sans JP', sans-serif;
+    font-size: 10px;
+    color: var(--violet-mid);
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    margin-bottom: 0.7rem;
+  }
+  .term-def-body { font-size: 0.9rem; color: var(--ink-2); line-height: 1.8; }
+
+  /* ── Two-col ────────────────────────────── */
+  .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 1.25rem; margin: 2rem 0; }
+  .col-box {
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 1.25rem 1.4rem;
+    background: var(--paper-2);
+  }
+  .col-box-title {
+    font-family: 'Noto Sans JP', sans-serif;
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.16em;
+    color: var(--ink-3);
+    margin-bottom: 0.75rem;
+    text-transform: uppercase;
+  }
+  .col-box p { font-size: 0.9rem; color: var(--ink-2); margin-bottom: 0.5rem; }
+  .col-box p:last-child { margin-bottom: 0; }
+
+  /* ── Tables ─────────────────────────────── */
+  .table-wrap { overflow-x: auto; margin: 2rem 0; border: 1px solid var(--border); border-radius: 8px; }
+  table { width: 100%; border-collapse: collapse; font-size: 0.87rem; font-family: 'Noto Sans JP', sans-serif; }
+  thead tr { background: var(--violet-dark); color: rgba(234,232,245,0.9); }
+  thead th { padding: 0.85rem 1.1rem; text-align: left; font-weight: 400; letter-spacing: 0.05em; font-size: 0.78rem; white-space: nowrap; }
+  tbody tr { border-top: 1px solid var(--border); transition: background 0.15s; }
+  tbody tr:hover { background: var(--paper-2); }
+  tbody td { padding: 0.9rem 1.1rem; vertical-align: top; line-height: 1.7; color: var(--ink-2); }
+  tbody td:first-child { font-weight: 500; color: var(--ink); }
+  .td-center { text-align: center; color: var(--ink-3); font-style: italic; }
+
+  /* ── Diagram wrap ───────────────────────── */
+  .diagram-wrap {
+    margin: 2.5rem 0;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 2rem 1.5rem;
+    background: var(--paper-2);
+  }
+  .diagram-caption {
+    font-family: 'Noto Sans JP', sans-serif;
+    font-size: 11px;
+    color: var(--ink-3);
+    text-align: center;
+    margin-top: 1.25rem;
+    letter-spacing: 0.08em;
+  }
+
+  /* ── Summary box ────────────────────────── */
+  .summary-box {
+    background: var(--violet-dark);
+    color: rgba(234,232,245,0.9);
+    border-radius: 10px;
+    padding: 2.5rem 2.5rem;
+    margin: 3rem 0;
+  }
+  .summary-box-label {
+    font-family: 'Noto Sans JP', sans-serif;
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.2em;
+    color: rgba(234,232,245,0.45);
+    margin-bottom: 1rem;
+    text-transform: uppercase;
+  }
+  .summary-box p {
+    font-family: 'Noto Serif JP', serif;
+    font-size: 1.02rem;
+    line-height: 2.1;
+    color: rgba(234,232,245,0.88);
+    letter-spacing: 0.03em;
+    margin-bottom: 0;
+  }
+
+  /* ── Footer ─────────────────────────────── */
+  footer {
+    background: var(--paper-3);
+    border-top: 1px solid var(--border);
+    padding: 2.5rem 3rem;
+    text-align: center;
+  }
+  footer p {
+    font-family: 'Noto Sans JP', sans-serif;
+    font-size: 11px;
+    color: var(--ink-3);
+    letter-spacing: 0.1em;
+    margin-bottom: 0;
+  }
+
+  /* ── Responsive ─────────────────────────── */
+  @media (max-width: 600px) {
+    .cover { padding: 3.5rem 1.5rem 3rem; }
+    .main { padding: 0 1.5rem 4rem; }
+    .nav { padding: 0 1rem; }
+    .two-col { grid-template-columns: 1fr; }
+    footer { padding: 2rem 1.5rem; }
+    .cover-meta { flex-direction: column; gap: 1rem; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ────────────── COVER ────────────────── -->
+<header class="cover">
+  <div class="cover-ring"></div>
+  <div class="cover-inner">
+    <p class="cover-label">Narrative Theory · 物語論 対論</p>
+    <h1 class="cover-title">遊戯共鳴論</h1>
+    <p class="cover-subtitle-ja">受容者内核説</p>
+    <p class="cover-subtitle">感情核・中心核は受容者の内にある——言葉で遊ぶことが創作であり、その遊戯から生じる感覚・感情の共鳴が他者との根本的な結びつきをなす。叙情詩・随筆・多声的作品から死語を用いた創作まで、あらゆる形式に適用可能な基底理論として、求心的物語構造理論を補強する。</p>
+    <div class="cover-meta">
+      <div class="cover-meta-item">種別<span>理論的考察</span></div>
+      <div class="cover-meta-item">対論<span>求心的物語構造理論</span></div>
+      <div class="cover-meta-item">版<span>v1.3</span></div>
+      <div class="cover-meta-item">言語<span>日本語</span></div>
+    </div>
+  </div>
+</header>
+
+<!-- ────────────── NAV ────────────────── -->
+<nav class="nav">
+  <div class="nav-inner">
+    <a href="#gaiyou">概要</a>
+    <a href="#naikai">内核</a>
+    <a href="#yugi">遊戯</a>
+    <a href="#kyomei">共鳴</a>
+    <a href="#keishiki">形式の多様性</a>
+    <a href="#jirei">事例</a>
+    <a href="#kankei">対論との関係</a>
+    <a href="#matome">まとめ</a>
+  </div>
+</nav>
+
+<!-- ────────────── MAIN ────────────────── -->
+<main class="main">
+
+<!-- ── OVERVIEW ── -->
+<section id="gaiyou">
+  <span class="section-num">OVERVIEW</span>
+  <h2>理論の概要</h2>
+
+  <p>従来の創作論は、感動の源泉をテクスト（作品）の内に求めてきた。感情核・中心核はテクストに宿り、受容者はそこへ向かって収束する——これが支配的な前提であった。</p>
+
+  <p>本理論はこの前提を反転させる。<strong>感情核・中心核は受容者の内にある。</strong>テクストは受容者の内核に接触し、それを活性化する差異の構造体である。そして、受容者が言語・記号・イメージを用いて積極的に意味づけを行う活動——これを本理論は<strong>遊戯</strong>と呼ぶ——こそが創作の本質であり、その遊戯から生じる感覚・感情が他者の内核と接触するとき、<strong>共鳴</strong>が生まれ、それが人と人との結びつきをなす。</p>
+
+  <div class="callout">
+    <p class="callout-label">理論の三命題</p>
+    <p>① <strong>内核の所在</strong>——感情核・中心核は受容者の内にあり、テクストの内にはない。<br>
+    ② <strong>遊戯としての創作</strong>——受容者は言語と遊ぶことで能動的に意味を生成する。この遊戯が創作の本体である。<br>
+    ③ <strong>共鳴としての結びつき</strong>——遊戯から生じる感覚・感情が他者の内核と接触するとき、共鳴が生まれ、人と人との根本的な結びつきが生ずる。</p>
+  </div>
+
+  <h3>反転の意味</h3>
+  <p>「テクスト内の核」から「受容者内の核」へ。この反転は単なる視点の移動ではなく、説明される現象の範囲を根本的に広げる。求心的な収束構造を持つ作品のみならず、叙情詩・随筆・多声的・脱中心的な作品のすべてが、同一の理論的枠組みで説明可能になる。死語・断片・日常語——いかなる言語素材を用いた創作であっても、受容者がそれを通じて遊戯を行い共鳴が生じうる。</p>
+
+  <div class="diagram-wrap">
+    <svg width="100%" viewBox="0 0 680 370" role="img">
+      <title>遊戯共鳴論の基本構造図</title>
+      <desc>左に作者（遊戯者A）の内核、中央にテクスト（差異の構造体）、右に受容者（遊戯者B）の内核を配置し、遊戯・接触・共鳴の三つの動きを示す。</desc>
+      <defs>
+        <marker id="arrv" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+          <path d="M2 1L8 5L2 9" fill="none" stroke="context-stroke" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </marker>
+      </defs>
+      <style>
+        .svgt  { font-family:'Noto Sans JP',sans-serif; font-size:12px; fill:#3d3830; }
+        .svgth { font-family:'Noto Serif JP',serif; font-size:13px; font-weight:700; fill:#1a1714; }
+        .svgts { font-family:'Noto Sans JP',sans-serif; font-size:11px; fill:#6b6359; }
+        .svglb { font-family:'Noto Sans JP',sans-serif; font-size:10px; letter-spacing:.08em; fill:#6b6359; }
+        .svgvl { font-family:'Noto Sans JP',sans-serif; font-size:10px; fill:#3d3480; }
+        .svgam { font-family:'Noto Serif JP',serif; font-size:13px; font-weight:700; fill:#b5640a; letter-spacing:.2em; }
+      </style>
+
+      <!-- header text -->
+      <text class="svgts" x="340" y="28" text-anchor="middle">受容者はそれぞれの内核を持ってテクストに接触し、内核と内核のあいだに共鳴が生じる</text>
+
+      <!-- LEFT: 作者 / 遊戯者A -->
+      <rect x="20" y="50" width="168" height="160" rx="10" fill="#eae8f5" stroke="#3d3480" stroke-width="0.8"/>
+      <text class="svgth" x="104" y="78" text-anchor="middle">作者・遊戯者 A</text>
+      <!-- inner core A -->
+      <circle cx="104" cy="150" r="36" fill="#3d3480" fill-opacity="0.1" stroke="#3d3480" stroke-width="1.2" stroke-dasharray="4 3"/>
+      <circle cx="104" cy="150" r="16" fill="#3d3480" fill-opacity="0.25" stroke="#3d3480" stroke-width="1"/>
+      <circle cx="104" cy="150" r="6"  fill="#3d3480" fill-opacity="0.7"/>
+      <text class="svgts" x="104" y="200" text-anchor="middle">内核</text>
+
+      <!-- RIGHT: 受容者 / 遊戯者B -->
+      <rect x="492" y="50" width="168" height="160" rx="10" fill="#eae8f5" stroke="#3d3480" stroke-width="0.8"/>
+      <text class="svgth" x="576" y="78" text-anchor="middle">受容者・遊戯者 B</text>
+      <!-- inner core B -->
+      <circle cx="576" cy="150" r="36" fill="#3d3480" fill-opacity="0.1" stroke="#3d3480" stroke-width="1.2" stroke-dasharray="4 3"/>
+      <circle cx="576" cy="150" r="16" fill="#3d3480" fill-opacity="0.25" stroke="#3d3480" stroke-width="1"/>
+      <circle cx="576" cy="150" r="6"  fill="#3d3480" fill-opacity="0.7"/>
+      <text class="svgts" x="576" y="200" text-anchor="middle">内核</text>
+
+      <!-- CENTER: テクスト -->
+      <rect x="263" y="90" width="154" height="80" rx="8" fill="#f7f3ee" stroke="#6b6359" stroke-width="0.8"/>
+      <text class="svgth" x="340" y="122" text-anchor="middle">テクスト</text>
+      <text class="svgts" x="340" y="140" text-anchor="middle">差異の構造体</text>
+      <text class="svgts" x="340" y="155" text-anchor="middle">遊戯の産物</text>
+
+      <!-- Arrow A → Text （遊戯） -->
+      <line x1="188" y1="145" x2="261" y2="145" stroke="#3d3480" stroke-width="1.5" marker-end="url(#arrv)" fill="none"/>
+      <text class="svgvl" x="224" y="136" text-anchor="middle">遊戯</text>
+
+      <!-- Arrow Text → B （接触） -->
+      <line x1="417" y1="145" x2="490" y2="145" stroke="#6b6359" stroke-width="1.5" marker-end="url(#arrv)" fill="none"/>
+      <text class="svglb" x="453" y="136" text-anchor="middle">接触</text>
+
+      <!-- Resonance arc bottom -->
+      <path d="M108 218 Q340 298 572 218" fill="none" stroke="#b5640a" stroke-width="1.8" stroke-dasharray="6 4" marker-end="url(#arrv)"/>
+      <text class="svgam" x="340" y="285" text-anchor="middle">共　鳴</text>
+
+      <!-- B also plays (re-play) -->
+      <path d="M490 162 Q452 180 418 162" fill="none" stroke="#3d3480" stroke-width="0.9" stroke-dasharray="3 3" marker-end="url(#arrv)"/>
+      <text class="svgvl" x="453" y="190" text-anchor="middle">再遊戯</text>
+
+      <!-- 感合 label near A-side interface -->
+      <text class="svglb" x="104" y="240" text-anchor="middle">感合によって選別</text>
+
+      <!-- divider -->
+      <line x1="40" y1="332" x2="620" y2="332" stroke="#c9c5bb" stroke-width="0.5"/>
+
+      <!-- compare note: centripetal vs this -->
+      <text class="svgts" x="170" y="350" text-anchor="middle">← 求心的理論：テクストに向かって収束</text>
+      <text class="svgts" x="510" y="350" text-anchor="middle">遊戯共鳴論：内核から遊戯して共鳴 →</text>
+    </svg>
+    <p class="diagram-caption">図1：遊戯共鳴の基本構造——内核・遊戯・テクスト・共鳴の四者関係</p>
+  </div>
+</section>
+
+<!-- ── SECTION 01: INNER CORE ── -->
+<section id="naikai">
+  <span class="section-num">SECTION 01</span>
+  <h2>内核（ないかく）とは何か</h2>
+
+  <div class="term-def">
+    <div class="term-def-word">内核（ないかく）</div>
+    <div class="term-def-read">NAIKAI · Inner Core</div>
+    <div class="term-def-body">受容者の内に宿る、前言語的な感情・意味の構造。明瞭な概念や感情として自覚されているわけではなく、むしろ言語との接触において「何かが合う」「ここに何かがある」という感合（かんごう）を通じて知覚される。方向を与えるが目的地を定めない。外から課される規則ではなく、遊戯の選別を内側から方向づける原理である。</div>
+  </div>
+
+  <h3>内核の四つの性格</h3>
+
+  <div class="two-col">
+    <div class="col-box">
+      <p class="col-box-title">前言語的である</p>
+      <p>内核は「自分はこういう人間だ」という自己概念でも、「こういうことに感動する」という趣味の記述でもない。言語化される以前に存在する潜在的な構造である。遊戯を通じて初めて輪郭を得る。</p>
+    </div>
+    <div class="col-box">
+      <p class="col-box-title">方向を与えるが、目的地は定めない</p>
+      <p>内核は「正解」を教えない。感合という感覚的指標を通じて「合う」「合わない」を示すだけである。遊戯の経路はつねに遊戯者に委ねられる。</p>
+    </div>
+  </div>
+  <div class="two-col" style="margin-top:0">
+    <div class="col-box">
+      <p class="col-box-title">層を持ち、遊戯と関係する</p>
+      <p>内核は固定した単一の核ではなく、複数の層として存在する。通常の遊戯においては、既存の層が順次活性化される——同じ人が同じテクストを異なる時点で読み、異なる共鳴を得るのはこのためである。他方、深い共鳴の体験は内核の構造そのものを更新しうる。この二段階の関係については後述する。</p>
+    </div>
+    <div class="col-box">
+      <p class="col-box-title">心理学的概念への還元ではない</p>
+      <p>内核は「無意識」でも「集合的無意識」でも「気質・性格」でもない。本理論では、創作と受容における内的方向づけの原理として定義する。既存の心理学的概念への還元を意図しない。</p>
+    </div>
+  </div>
+
+  <h3>遊戯と内核の関係：活性化と更新</h3>
+
+  <p>内核は遊戯の中でどう働くか。本理論は、通常の遊戯と深い共鳴の体験を区別することで、この問いに答える。</p>
+
+  <p>通常の遊戯においては、テクストの差異構造が内核の既存の層に接触し、その層を活性化する。内核の構造そのものは変化しない。同じ詩を十年後に読んで別の場所が光るのは、内核の別の層が活性化されたためである——内核は変わっていないが、今の遊戯者が別の深さにある層へ降りたのだ。</p>
+
+  <p>しかし深い共鳴の体験は、内核の層を活性化するにとどまらず、内核の構造そのものを更新する。ある作品との出会いが「人を変える」と言われるのは、この意味においてである。更新された内核は、以後の遊戯における感合の方向を変える——以前は「合う」と感じなかったものが合うようになり、以前は合っていたものが死ぬようになる。</p>
+
+  <div class="two-col">
+    <div class="col-box">
+      <p class="col-box-title">活性化（通常の遊戯）</p>
+      <p>テクストが内核の既存の層に接触する。内核の構造は変化しない。再読で感動の質が変わる、年齢によって同じ作品の受け取り方が変わる、といった現象の記述。</p>
+    </div>
+    <div class="col-box">
+      <p class="col-box-title">更新（深い共鳴）</p>
+      <p>深い共鳴の体験が内核の構造そのものを書き換える。この更新は可逆ではない。「あの作品と出会う前の自分には戻れない」という体験の記述。</p>
+    </div>
+  </div>
+
+  <div class="callout">
+    <p class="callout-label">二段階の区別が説明すること</p>
+    <p>この区別によって、二つの異なる現象が同一の理論枠組みで記述できる。第一に、<strong>再読の現象</strong>——同じテクストが異なる時点で異なる共鳴を起こす。内核の別の層が活性化されたためであり、内核の更新ではない。第二に、<strong>変容の現象</strong>——ある作品との出会いが以後の遊戯のあり方を根本から変える。深い共鳴による内核の構造更新として記述される。活性化と更新を区別しなければ、この二つは同じ現象として扱われてしまい、それぞれの質的な差異が失われる。</p>
+  </div>
+
+  <div class="callout">
+    <p class="callout-label">補注：着地の質による活性化と更新の区別</p>
+    <p>活性化（通常の遊戯）においては、テクストの差異構造が内核の既存の層に接触し、内核の方向性の範囲内で着地が成立する。更新（深い共鳴）においては、この着地が内核の方向性そのものを超える水準で生じ、以後の感合の方向を変える。両者の質的な違いは「着地の強度・意外性・その後の変容感」として体験されうる。ただし内核は前言語的な構造であるため、受け手が直接対象化できるものではない。「着地の質の差」はあくまで体験の外側からの記述として理解されたい。</p>
+  </div>
+
+  <div class="callout">
+    <p class="callout-label">補注：内核の安定性と流動性——相互規定のサイクル</p>
+    <p>内核は固定した実体ではなく、また完全に流動するものでもない。この両面性こそが遊戯を可能にしている。</p>
+    <p>内核に一定の構造（方向を与える複数の層）があるからこそ、感合が生じる——何が「合う」かを感じ取る基準が存在するためである。もし内核が完全に流動するならば、感合は生じない。同時に、深い共鳴の体験によって内核の構造は更新されうる（既述）。</p>
+    <p>遊戯のなかで感合が「着地する」とき、揺れ動く自己は一時的な輪郭を得る。この着地が次の遊戯の足場となり、遊戯はそこから再び動き始める。内核の安定性（方向を与える構造）と遊戯の流動性（感合に従った探索）は対立しない——一時的な着地があるからこそ次の探索が可能であり、探索があるからこそ内核の新たな層が活性化される。この循環が遊戯と内核の相互規定的な関係の実体である。</p>
+  </div>
+
+  <div class="term-def">
+    <div class="term-def-word">感合（かんごう）</div>
+    <div class="term-def-read">KANGO · Fitting Sense</div>
+    <div class="term-def-body">遊戯の中で内核と言語・記号が接触するときに生じる感覚的指標。「これは合う」「ここに何かある」「これは死んでいる」という形で現れ、遊戯における選別の基準となる。正解を指示するのではなく、次の遊戯の方向を示す。感合が「合う」と示す選択が積み重なることで、テクストが形成される。</div>
+  </div>
+
+  <div class="callout">
+    <p class="callout-label">補注：感合の二局面</p>
+    <p>感合の働きには、遊戯のなかで交互に現れる二つの局面がある。「これは合わない」という引っかかりの局面は、遊戯の探索を継続させ次の方向を予測させる契機となる。「ここに何かある・合う」という着地の局面は、遊戯に一時的な落ち着きを与え、次のサイクルへの足場となる。この二局面は独立した二種類の感合ではなく、一つの感合体験が遊戯の進行とともに連続的に現れるものである。なお、感合はいずれの局面においても内核の方向を参照して生じる——「何に引っかかるか」「何に着地するか」は内核の構造によって決まる。</p>
+  </div>
+
+  <div class="callout teal">
+    <p class="callout-label">求心的理論の「感情核」との区別</p>
+    <p>求心的物語構造理論における「感情核」はテクストの内に設置・発見されるものであり、受容者が向かうべき目的地である。本理論における「内核」は受容者の内にあり、テクストとの接触によって輪郭を得る潜在構造である。前者はテクストの構造的特性を記述し、後者は受容者の内的方向づけ原理を記述する。混同を避けるため、本理論では「内核」と呼んで明確に区別する。</p>
+  </div>
+</section>
+
+<!-- ── SECTION 02: PLAY ── -->
+<section id="yugi">
+  <span class="section-num">SECTION 02</span>
+  <h2>遊戯（ゆうぎ）としての創作</h2>
+
+  <p>創作とは何か。本理論の答えは次のようである。<strong>言語・記号・イメージを素材として、内核の感合に導かれながら、積極的に意味づけを行う活動</strong>——これが遊戯であり、遊戯こそが創作の本体である。</p>
+
+  <div class="term-def">
+    <div class="term-def-word">遊戯（ゆうぎ）</div>
+    <div class="term-def-read">YŪGI · Purposive Play</div>
+    <div class="term-def-body">言語・記号・イメージを素材として、内核の感合に導かれながら行う能動的な意味生成活動。娯楽・気晴らしとしての「遊び」ではなく、内核を方向づけとして自由に、しかし感合の選別に従って、意味を探索・生成する活動を指す。書くことも読むことも、ともに遊戯である。</div>
+  </div>
+
+  <h3>遊戯は恣意的ではない</h3>
+  <p>遊戯を「好き勝手にやること」と呼ぶとき、それは「外側の規則によって正解が定められていない」という意味である。好き勝手に、しかし感合に従う——この二つは矛盾しない。外側の規則がない代わりに、内核の感合が方向づけを行う。感合が「死んでいる」と示す選択は自然に落ち、感合が「合う」と示す選択が残る。この選別の集積がテクストを形成する。</p>
+
+  <div class="two-col">
+    <div class="col-box">
+      <p class="col-box-title">遊戯である</p>
+      <p>内核の感合に従って言語を選び、変え、崩し、組み合わせる。「合う」が残り、「合わない」が落ちる。この選別が作品を形成する。</p>
+    </div>
+    <div class="col-box">
+      <p class="col-box-title">遊戯でない</p>
+      <p>あらかじめ定められた規範（正しい文法・様式・市場の期待）だけに従って語句を配置する作業。外側の尺度が選別を行い、内核は介在しない。</p>
+    </div>
+  </div>
+
+  <h3>死語・断片・日常語での遊戯</h3>
+  <p>遊戯に使える素材に制限はない。生きた日常語であっても、古文・漢文・外国語であっても、さらには現代では意味が通じなくなった死語であっても、遊戯は成立する。</p>
+  <p>なぜなら、遊戯に必要なのは「言語が正しく意味を伝えること」ではなく、<strong>差異の構造</strong>（A とA でないものの区別）だからである。どのような語にも、意味の区別として刻まれた差異構造がある。受容者はその差異構造に触れ、自らの内核がどのように反応するかを感合によって知る。死語であっても、その音韻・字形・文脈的痕跡は差異の場を作る。内核はその差異の場と接触し、活性化される。</p>
+
+  <div class="callout">
+    <p class="callout-label">読むことも遊戯である</p>
+    <p>受容者はテクストを「受け取る」のではなく、テクストを素材として自らの遊戯を行う。作者と受容者の違いは、前者が遊戯の産物（テクスト）を固定して外に出す点にある。固定されたテクストは、次の遊戯者（受容者）の出発素材となる。読むことは受動的な吸収ではなく、内核を賭けた能動的な遊戯である。</p>
+  </div>
+
+  <h3>設計先行型と発見型の再記述</h3>
+  <p>求心的物語構造理論が区別した「設計先行型」と「発見型」も、遊戯の観点から再記述できる。設計先行型とは、内核の感合から得た方向を先に言語化してから遊戯を展開する型である。発見型とは、遊戯を続けるなかで内核の輪郭が徐々に現れてくる型である。どちらも遊戯であり、内核が方向を与えるという構造は変わらない。「書きながら発見する」とは、遊戯のサイクルを経るなかで内核が徐々に自覚的になるプロセスの、実践上の経験的記述である。</p>
+
+  <h3>テクストの不変性と自己照射</h3>
+  <p>テクストは固定されており、受容者の遊戯がいかに変化しようとも変わらない。この不変性は単なる制約ではなく、遊戯に特有の機能を与える。</p>
+  <p>動き続ける内核に対して、テクストは揺れない。受容者はこの不動の参照点と繰り返し接触することで、「テクストに対して自分の感合がどのように動くか」を感じ取ることができる。同じ詩を十年後に読んで別の場所が光るのは、テクストが変わらないからこそ起きる——テクストが毎回変わるならば、感合の変化はテクストによるものか内核によるものか区別できない。変わらないテクストがあるからこそ、変化したのは自分の内核の方だと感じ取れる。テクストの不変性は、内核の動きを照らし返す場として機能する。</p>
+  <p>さらに遊戯の中で感合が着地するとき——「ここに何かある」と感じる瞬間——揺れ動く内核は一時的に輪郭を得る。この一時的な輪郭が次の遊戯の足場となり、遊戯は着地するたびに新しい出発点を得て再び動き始める。固定されたテクストは、この着地と再起動のサイクルを可能にする定点として、遊戯全体を支えている。</p>
+
+  <div class="callout">
+    <p class="callout-label">定点としてのテクスト</p>
+    <p>テクストは感情を「与える」ものではない。受容者の内核が感合によって動くとき、テクストはその動きを映し返す不動の定点として機能する。受容者は「テクストに感動した」のではなく、「テクストとの接触によって、自らの内核の動きに触れた」のである。テクストが不変であるほど、その定点としての機能は強くなる——優れたテクストが繰り返し読まれるのは、その不変性が遊戯者の内核の変化を精密に照らし続けるためでもある。</p>
+  </div>
+</section>
+
+<!-- ── SECTION 03: RESONANCE ── -->
+<section id="kyomei">
+  <span class="section-num">SECTION 03</span>
+  <h2>共鳴（きょうめい）の構造</h2>
+
+  <p>遊戯は個人の内的活動である。しかし創作は他者に向かう。作者の遊戯から生じたテクストが、受容者の内核に接触し、受容者自身の遊戯を起動する。このとき、作者の内核と受容者の内核が——互いに同一ではなくとも——同型の差異構造を通じて互いに輪郭を得るとき、<strong>共鳴</strong>が生じる。</p>
+
+  <div class="term-def">
+    <div class="term-def-word">共鳴（きょうめい）</div>
+    <div class="term-def-read">KYŌMEI · Resonance</div>
+    <div class="term-def-body">作者の遊戯（テクスト）を介して、作者の内核と受容者の内核が、同型の差異構造によって互いに輪郭を得る体験。感情の内容が同一であることを意味しない。内核と内核が、同一の差異の場を通じて、それぞれの仕方で活性化される構造的な出来事であり、これが人と人との根本的な結びつきをなす。</div>
+  </div>
+
+  <h3>共鳴は「同じ感情を共有すること」ではない</h3>
+  <p>同一の音楽が聴衆の各人を異なる仕方で動かし、同一の詩が読者ごとに異なるものに触れる——これは共鳴の失敗ではなく、共鳴の本来の姿である。共鳴とは、テクストという媒介を通じて内核と内核が接触することであって、内核の内容が同一化することではない。</p>
+
+  <div class="two-col">
+    <div class="col-box">
+      <p class="col-box-title">共鳴である</p>
+      <p>同一のテクストが、AとBの内核をそれぞれの仕方で活性化し、両者のあいだに「異なりながらも繋がっている」という感覚が生まれる。他者性を保ったままの接触。</p>
+    </div>
+    <div class="col-box">
+      <p class="col-box-title">共鳴ではない</p>
+      <p>AがBと完全に同じ感情を持つこと。内核の同一化は共鳴ではなく、他者性の消去である。他者との本当の結びつきは、同一化によっては成立しない。</p>
+    </div>
+  </div>
+
+  <h3>共鳴の条件</h3>
+  <p>共鳴は保証されない。二つの条件が同時に必要である。</p>
+  <p>第一に、<strong>テクストが十分な差異密度を持つこと</strong>。差異の場が豊かでなければ、いかなる内核も接触する手がかりを得られない。差異密度がきわめて低いテクスト（完全に均質・平板な記述）は、内核への接触点を持たない。言語が並んでいる限り何らかの差異構造が生まれるが、その密度は遊戯の可能性の幅を決める。</p>
+  <p>第二に、<strong>受容者の内核がテクストの差異構造に対応する構造を持つこと</strong>。内核と差異構造の対応がなければ、感合は生じない。ある受容者において共鳴が起きなかったとしても、それはテクストの失敗を必ずしも意味しない。別の内核を持つ受容者において、同じテクストが深い共鳴を引き起こすことがある。あらゆるテクストは、対応する内核を持つ受容者においては共鳴しうる。</p>
+
+  <div class="callout teal">
+    <p class="callout-label">他者性と共鳴</p>
+    <p>共鳴が「同一感情の共有」でないことは、他者との結びつきについて重要な含意を持つ。他者は自分と同じ内核を持たない。しかしだからこそ、同一のテクストを通じて異なる仕方で活性化された内核同士が接触するとき、「同一ではないが繋がっている」という他者との結びつきの感覚が生まれる。この他者性を保ったままの共鳴こそが、創作が生む人と人との結びつきの本質である。</p>
+  </div>
+
+  <h3>共鳴の連鎖</h3>
+  <p>固定されたテクストは、次の遊戯者の出発素材となる。受容者はテクストを受け取った後、それを材料として自らの遊戯を起動する。この遊戯から新たなテクストが生まれることもある（批評・二次創作・オマージュ・パロディ）。あるいは内面的な意味変容として残ることもある。いずれにせよ受容者は受動的な受け取り手ではなく、能動的な遊戯者である。</p>
+  <p>ある者の遊戯の産物が次の遊戯者の出発素材となり、また新たな共鳴を生む——この連鎖が文化・伝統・思想の伝播として現れる。テクストの「死」（作者の不在・言語の消滅）は連鎖の終焉を意味しない。差異構造が残る限り、どこかの時点でどこかの受容者の内核が接触しうる。</p>
+</section>
+
+<!-- ── SECTION 04: DIVERSITY OF FORMS ── -->
+<section id="keishiki">
+  <span class="section-num">SECTION 04</span>
+  <h2>形式の多様性：あらゆる創作への適用</h2>
+
+  <p>本理論の説明力は、求心的な収束構造を持つ作品に限られない。叙情詩・随筆・多声的作品——これらはすべて遊戯と共鳴の観点から、それぞれの仕方で説明される。求心的理論において「部分適用」「例外」とされた形式が、本理論では各々の正当な位置を得る。</p>
+
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr><th>形式</th><th>遊戯の性格</th><th>内核との関係</th><th>共鳴の様相</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>叙情詩</td>
+          <td>最も直接的・差異密度が高い</td>
+          <td>内核に最も短い経路で接触する形式。圧縮と凝縮が極限まで進む</td>
+          <td>即時的・強度が高い。受容者の内核が一撃で活性化されることがある</td>
+        </tr>
+        <tr>
+          <td>随筆</td>
+          <td>探索的・脱線を許容する</td>
+          <td>書き手が遊戯しながら自らの内核の輪郭を発見していく形式</td>
+          <td>受容者が書き手の探索に伴走して自ら遊戯する。共鳴は過程のなかに分散する</td>
+        </tr>
+        <tr>
+          <td>多声的・脱中心的作品</td>
+          <td>遊戯そのものを前景化</td>
+          <td>単一の内核収束を意図せず、複数の差異の場を並置する</td>
+          <td>受容者が能動的に構成する共鳴。どの内核の層が活性化されるかは受容者に委ねられる</td>
+        </tr>
+        <tr>
+          <td>求心的構造を持つ作品</td>
+          <td>収束形の遊戯</td>
+          <td>遊戯が一方向に集積し、感情核への収束が設計・発見される</td>
+          <td>段階的・遡及的。遡及的必然として共鳴が完結する（求心的理論が精密に記述）</td>
+        </tr>
+        <tr>
+          <td>死語・古典・異言語テクスト</td>
+          <td>差異構造との直接接触</td>
+          <td>言語の意味的透明性を迂回し、音韻・字形・構造的痕跡が内核に接触</td>
+          <td>意味的共有を前提としない共鳴。言語理解を超えた感合から生じる</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h3>叙情詩——内核への最短経路</h3>
+  <p>叙情詩は収束しない。時間的な物語を持たず、論理的な展開も持たない場合が多い。求心的構造理論から見ると「部分適用」にとどまる形式である。しかし遊戯共鳴論の観点では、叙情詩は内核への最も直接的な形式である。</p>
+  <p>詩人の遊戯は、選ばれた言語・音韻・切断・余白によって、受容者の内核に直接接触する差異の場を作る。収束すべき一点を設計するのではなく、内核が最高密度で活性化できる差異構造を圧縮して提示する。受容者は「理解する」のではなく「合う」という感合によって詩と接触する。この接触が——「意味がわかった」という以前に——共鳴を起こしうる。</p>
+
+  <h3>随筆——探索を共にする形式</h3>
+  <p>随筆は脱線する。主題から離れ、意外な連想をたどり、論旨が揺れる。この「不整合」は形式的失敗ではない。随筆とは書き手自身の遊戯の痕跡であり、その探索過程そのものが受容者に提示される形式である。</p>
+  <p>受容者は書き手の探索に伴走する。「この連想はどこへ向かうのか」「この脱線は何かに触れているのか」——受容者も自らの内核の感合に従ってテクストを読む。共鳴は到達点ではなく、探索の過程のなかに分散して生じる。随筆において「うまく締まらない」ことは失敗ではなく、遊戯の本性の表れである。</p>
+
+  <h3>多声的・脱中心的作品——遊戯の前景化</h3>
+  <p>ポストモダン小説・実験詩・多声的テクストは、単一の収束を意図的に拒否する。これは求心的理論から見ると「例外」であるが、遊戯共鳴論から見ると最も急進的な形式である。</p>
+  <p>これらの作品は「これは遊戯である」「あなたも遊戯者である」という構造を前景化する。受容者は収束点へ導かれることなく、複数の差異の場のあいだで自らの内核の感合に従って遊戯を行う。共鳴は完結しない——むしろ共鳴の可能性を永続的に開いたままにする。これは制御の失敗ではなく、遊戯の特定の形式の完成である。</p>
+</section>
+
+<!-- ── SECTION 05: CASE STUDIES ── -->
+<section id="jirei">
+  <span class="section-num">SECTION 05</span>
+  <h2>事例による検証</h2>
+
+  <p>本理論が提示する枠組みを、具体的な事例に照らして確認する。</p>
+
+  <div style="border:1px solid var(--border);border-radius:10px;overflow:hidden;margin:2rem 0">
+    <div style="background:var(--paper-3);padding:1rem 1.4rem;display:flex;align-items:baseline;gap:1rem;border-bottom:1px solid var(--border)">
+      <span style="font-family:'Noto Sans JP',sans-serif;font-size:11px;letter-spacing:.12em;color:var(--ink-3)">事例 01</span>
+      <span style="font-family:'Shippori Mincho',serif;font-size:1rem;font-weight:700;color:var(--ink)">松尾芭蕉「古池や　蛙飛び込む　水の音」（1686年）</span>
+    </div>
+    <div style="padding:1.25rem 1.4rem">
+      <p style="font-size:.93rem">叙情詩の典型として。この俳句は物語的収束を持たない。受容者が「意味を理解する」以前に、「古池」という差異の場（古い水の静止感・時間の沈殿）が内核に接触する。「や」という切れ字が差異を増幅し、蛙の音との接触が新たな差異の場（静の中の動・永遠の中の瞬間）を生む。受容者それぞれの内核の層に応じて、異なる共鳴が生じる。「意味」が同一でも、共鳴は異なりうる。</p>
+      <p style="font-size:.93rem">また、この句は百年後・千年後の読者においても遊戯の素材となりうる。差異構造が残る限り、内核の接触は時代を超える。</p>
+    </div>
+  </div>
+
+  <div style="border:1px solid var(--border);border-radius:10px;overflow:hidden;margin:2rem 0">
+    <div style="background:var(--paper-3);padding:1rem 1.4rem;display:flex;align-items:baseline;gap:1rem;border-bottom:1px solid var(--border)">
+      <span style="font-family:'Noto Sans JP',sans-serif;font-size:11px;letter-spacing:.12em;color:var(--ink-3)">事例 02</span>
+      <span style="font-family:'Shippori Mincho',serif;font-size:1rem;font-weight:700;color:var(--ink)">ヘラクレイトス 断章（前5世紀）——死語での遊戯</span>
+    </div>
+    <div style="padding:1.25rem 1.4rem">
+      <p style="font-size:.93rem">「同じ川へと踏み入る者たちの上へ、異なる水がまた異なる水として流れ込む」——これはギリシャ語原文としてはほとんどの読者に死語である。しかし翻訳・転写・参照を経て現代に伝わる差異構造は、「同一性と変化の逆説」「川という固定と流れという変化の接触」という差異の場を持つ。</p>
+      <p style="font-size:.93rem">受容者はこの差異の場に触れ、自らの内核の感合に従って遊戯を行う。「同じ」が「同じでない」になる構造が内核に接触する。原語の意味を知らなくとも共鳴は起きうる——これが「死語でも遊戯できる」ことの実例である。</p>
+    </div>
+  </div>
+
+  <div style="border:1px solid var(--border);border-radius:10px;overflow:hidden;margin:2rem 0">
+    <div style="background:var(--paper-3);padding:1rem 1.4rem;display:flex;align-items:baseline;gap:1rem;border-bottom:1px solid var(--border)">
+      <span style="font-family:'Noto Sans JP',sans-serif;font-size:11px;letter-spacing:.12em;color:var(--ink-3)">事例 03</span>
+      <span style="font-family:'Shippori Mincho',serif;font-size:1rem;font-weight:700;color:var(--ink)">ドストエフスキー「罪と罰」（1866年）——求心的作品での共鳴</span>
+    </div>
+    <div style="padding:1.25rem 1.4rem">
+      <p style="font-size:.93rem">求心的理論が感情核とクライマックスの分離の例として挙げた作品。遊戯共鳴論の観点では：作者は「罪・意識・崩壊」という差異の場を、674ページにわたる遊戯として展開した。受容者はラスコーリニコフの心理の差異構造（行動と良心の引き裂き）に内核が接触し続けることで、共鳴の蓄積が生じる。</p>
+      <p style="font-size:.93rem">感情核（求心的理論）と内核（本理論）は異なる記述をしているが、矛盾しない。感情核はこの作品の差異構造が最も高密度になる点を記述し、内核は受容者の側でその密度に応じる潜在的な構造を記述する。両者が合わさることで、なぜこの作品がこの受容者をこの仕方で動かすかが説明できる。</p>
+    </div>
+  </div>
+</section>
+
+<!-- ── SECTION 06: RELATIONSHIP ── -->
+<section id="kankei">
+  <span class="section-num">SECTION 06</span>
+  <h2>求心的物語構造理論との補完関係</h2>
+
+  <p>本理論は、求心的物語構造理論の否定ではない。求心的理論は、感情核への収束を持つ作品における構造を精密に記述する。本理論は、すべての創作に共通する基底機序——遊戯と共鳴——を記述する。両者は記述する対象の水準が異なる。</p>
+
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr><th></th><th>求心的物語構造理論</th><th>遊戯共鳴論（本理論）</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>根本的な問い</td>
+          <td>収束的な感動はどのように設計・体験されるか</td>
+          <td>創作はなぜ受容者を動かしうるか</td>
+        </tr>
+        <tr>
+          <td>中心核・感情核の所在</td>
+          <td>テクストの内（作者が設計・発見）</td>
+          <td>受容者の内（内核）</td>
+        </tr>
+        <tr>
+          <td>受容者の役割</td>
+          <td>テクスト内の核へ向かって収束する</td>
+          <td>自らの内核を賭けて遊戯する</td>
+        </tr>
+        <tr>
+          <td>感動の機序</td>
+          <td>遡及的必然——断片が一点への必然として意味づけられる</td>
+          <td>共鳴——内核と内核が同型の差異構造を通じて接触する</td>
+        </tr>
+        <tr>
+          <td>適用対象</td>
+          <td>収束型の作品に最適</td>
+          <td>あらゆる形式の創作に適用可能</td>
+        </tr>
+        <tr>
+          <td>記述の水準</td>
+          <td>特定形式（収束型）の構造記述</td>
+          <td>すべての形式に共通する基底機序の記述</td>
+        </tr>
+        <tr>
+          <td>二者の関係</td>
+          <td class="td-center" colspan="2">補完関係——遊戯共鳴論が基底を与え、求心的理論が収束形の精密な記述を与える</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="callout amber">
+    <p class="callout-label">統合的解釈：収束型遊戯という特殊ケース</p>
+    <p>求心的理論が記述する「感情核への収束」は、遊戯共鳴論の観点では<strong>遊戯が収束形をとった特殊ケース</strong>として位置づけられる。収束型の遊戯においては、内核の感合が一方向に蓄積し、遡及的必然として受容者に強度の高い完結感をもたらす。この特殊な強度を持つ共鳴を、求心的理論は精密に記述する。二つの理論は対立しない——基底（遊戯共鳴）と特殊形式（求心的収束）の関係にある。</p>
+  </div>
+
+  <h3>二つの理論が合わさって説明できること</h3>
+  <p>なぜある作品がある受容者を動かし、別の受容者を動かさないのか——この問いに対して、二つの理論を合わせると次の説明が得られる。</p>
+  <p>第一に、テクストが差異の場を持つこと（遊戯共鳴論）。第二に、受容者の内核がテクストの差異構造に対応する構造を持つこと（遊戯共鳴論）。第三に、求心的構造を持つ作品においては、その収束方向が受容者の内核の方向と一致すること（求心的理論）。これら三条件が重なったとき、最も強度の高い共鳴——遡及的必然を伴う感動——が生じる。</p>
+</section>
+
+<!-- ── SECTION 07: SUMMARY ── -->
+<section id="matome">
+  <span class="section-num">SECTION 07</span>
+  <h2>理論のまとめ</h2>
+
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>命題</th><th>内容</th></tr></thead>
+      <tbody>
+        <tr>
+          <td>内核の所在</td>
+          <td>感情核・中心核は受容者の内にある前言語的な感情・意味の構造（内核）である。テクストはこれを活性化する差異の構造体であって、核を内蔵するものではない</td>
+        </tr>
+        <tr>
+          <td>遊戯としての創作</td>
+          <td>創作とは言語・記号・イメージを用いて内核の感合に導かれながら行う能動的な意味生成活動（遊戯）である。書くことも読むことも、ともに遊戯である</td>
+        </tr>
+        <tr>
+          <td>感合による選別</td>
+          <td>遊戯の中で「合う」「合わない」という感合が生じ、これが素材の選別を行う。感合は正解を教えるのではなく、次の遊戯の方向を示す内核からの感覚的指標である</td>
+        </tr>
+        <tr>
+          <td>共鳴の定義</td>
+          <td>作者の内核と受容者の内核が、テクストという媒介を通じて同型の差異構造で接触するとき、共鳴が生じる。共鳴は同一感情の共有ではなく、異なる内核が同型の差異構造を通じて互いに輪郭を得る体験である</td>
+        </tr>
+        <tr>
+          <td>普遍的適用</td>
+          <td>遊戯と共鳴の構造は、あらゆる創作形式（叙情詩・随筆・多声的作品・求心的作品・死語を用いた創作）に適用可能である。収束構造の有無は共鳴の条件ではない</td>
+        </tr>
+        <tr>
+          <td>共鳴の条件</td>
+          <td>テクストが十分な差異密度を持つこと、かつ受容者の内核がその差異構造に対応する構造を持つことが共鳴の条件である。これらが欠ければ共鳴は生じないが、これは特定のテクストの絶対的な失敗を意味しない</td>
+        </tr>
+        <tr>
+          <td>活性化と更新</td>
+          <td>通常の遊戯においてテクストは内核の既存の層を活性化するにとどまる。しかし深い共鳴の体験は内核の構造そのものを更新しうる。この二段階の区別が、再読現象と変容現象の質的差異を説明する</td>
+        </tr>
+        <tr>
+          <td>他者性と共鳴</td>
+          <td>共鳴は同一感情の共有ではなく、他者性を保ったままの内核の接触である。この他者性を保ったままの共鳴こそが、創作が生む人と人との結びつきの本質である</td>
+        </tr>
+        <tr>
+          <td>共鳴の連鎖</td>
+          <td>固定されたテクストは次の遊戯者の出発素材となり、共鳴の連鎖が続く。この連鎖は作者の不在・言語の消滅を超えて持続しうる</td>
+        </tr>
+        <tr>
+          <td>求心的理論との関係</td>
+          <td>遊戯共鳴論は基底理論として機能し、求心的物語構造理論は収束型の遊戯という特殊ケースを精密に記述する。両者は補完関係にあり、合わさることで完全な説明を与える</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="summary-box">
+    <p class="summary-box-label">一文要約</p>
+    <p>創作とは言語との遊戯であり、遊戯は受容者の内に宿る前言語的な感情・意味の構造（内核）を方向として感合に従いながら進み、その遊戯の産物であるテクストを介して別の内核が接触するとき共鳴が生まれる——通常の共鳴は内核の既存の層を活性化するにとどまるが、深い共鳴は内核の構造そのものを更新する。この他者性を保ったままの共鳴こそが人と人とを結びつけ、いかなる形式の創作も、いかなる時代の言語も、この遊戯と共鳴の回路に乗ることができる。</p>
+  </div>
+</section>
+
+</main>
+
+<footer>
+  <p>遊戯共鳴論（受容者内核説）── 求心的物語構造理論との対論として</p>
+  <p style="margin-top:0.5rem">初版 v1.0（2026年）：「感情核・中心核の所在の反転」「遊戯としての創作」「共鳴の構造」「形式の多様性」の四点を定式化。<br>v1.1（2026年）：Section 01「内核の三つの性格」を「四つの性格」に修正。「遊戯と内核の関係：活性化と更新」節を新設。命題表に「活性化と更新」を追加。一文要約を更新。<br>v1.2（2026年）：Section 01 に補注「感合の二局面」を追加（「合わない」局面と「合う」局面の区別を記述）。Section 01 に補注「着地の質による活性化と更新の区別」を追加（活性化と更新の体験的差異を外側から記述。ただし内核の前言語的性格は維持し、直接対象化できないことを明示）。いずれも既存の定義・命題を変更せず、体験的記述の補完にとどめる。<br>v1.3（2026年）：Section 01 に補注「内核の安定性と流動性——相互規定のサイクル」を追加（内核の一時的着地が次の遊戯の足場になるという相互規定的な循環を記述。既存の定義・命題を変更しない）。Section 02 に「テクストの不変性と自己照射」節および callout「定点としてのテクスト」を追加（固定されたテクストが内核の動きを照らし返す定点として機能するという構造を記述）。</p>
+</footer>
+
+</body>
+</html>

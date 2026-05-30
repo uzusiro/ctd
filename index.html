@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>創作理論三文書</title>
+<style>
+:root {
+  --ink: #1c1b18;
+  --ink2: #4a4845;
+  --ink3: #8a8680;
+  --rule: #e2dfd7;
+  --rule2: #c9c5bb;
+  --bg: #faf9f5;
+  --bg2: #f2f0ea;
+  --bg3: #e8e5dc;
+  --acc-ind: #26215c;
+  --acc-warm: #b54a1a;
+  --acc-teal: #156054;
+  --serif: Georgia, 'Times New Roman', serif;
+  --sans: -apple-system, 'Helvetica Neue', sans-serif;
+  --mono: 'IBM Plex Mono', 'Courier New', monospace;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html { font-size: 16px; scroll-behavior: smooth; }
+body {
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--sans);
+  line-height: 1.8;
+  padding: 0 0 6rem;
+}
+a { color: inherit; text-decoration: none; }
+
+/* masthead */
+.masthead {
+  background: var(--ink);
+  color: #f5f2ec;
+  padding: 4rem 2rem 3.5rem;
+}
+.mast-inner {
+  max-width: 760px;
+  margin: 0 auto;
+}
+.mast-eyebrow {
+  font-size: .72rem;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  color: #a09890;
+  margin-bottom: .75rem;
+  font-family: var(--mono);
+}
+.mast-title {
+  font-family: var(--serif);
+  font-size: 2rem;
+  font-weight: normal;
+  line-height: 1.2;
+  letter-spacing: -.02em;
+  color: #f5f2ec;
+  margin-bottom: 1rem;
+}
+.mast-desc {
+  font-size: .9rem;
+  color: #9a928a;
+  line-height: 1.75;
+  max-width: 560px;
+}
+
+/* main */
+.main {
+  max-width: 760px;
+  margin: 0 auto;
+  padding: 3rem 2rem 0;
+}
+
+/* abstract */
+.abstract {
+  border-left: 3px solid var(--rule2);
+  padding: 1.25rem 1.5rem;
+  margin-bottom: 3rem;
+  background: var(--bg2);
+}
+.abstract p {
+  font-family: var(--serif);
+  font-size: .97rem;
+  line-height: 1.85;
+  color: var(--ink2);
+  margin-bottom: .75rem;
+}
+.abstract p:last-child { margin-bottom: 0; }
+
+/* section heading */
+.section-label {
+  font-size: .7rem;
+  font-weight: 600;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  color: var(--ink3);
+  margin-bottom: 1.25rem;
+  font-family: var(--mono);
+}
+
+/* theory cards */
+.cards {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  margin-bottom: 3.5rem;
+}
+.card {
+  border: 1px solid var(--rule2);
+  background: #fff;
+  display: grid;
+  grid-template-columns: 4px 1fr;
+  transition: box-shadow .15s;
+}
+.card:hover {
+  box-shadow: 0 2px 12px rgba(0,0,0,.07);
+}
+.card-accent {
+  background: var(--accent);
+}
+.card-body {
+  padding: 1.5rem 1.75rem;
+}
+.card-eyebrow {
+  font-size: .68rem;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  color: var(--accent);
+  font-family: var(--mono);
+  display: block;
+  margin-bottom: .4rem;
+}
+.card-title {
+  font-family: var(--serif);
+  font-size: 1.2rem;
+  font-weight: normal;
+  color: var(--ink);
+  margin-bottom: .25rem;
+  line-height: 1.3;
+}
+.card-sub {
+  font-size: .8rem;
+  color: var(--ink3);
+  margin-bottom: .85rem;
+  font-family: var(--mono);
+}
+.card-desc {
+  font-size: .88rem;
+  color: var(--ink2);
+  line-height: 1.7;
+  margin-bottom: 1rem;
+}
+.card-concepts {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .4rem;
+  margin-bottom: 1.1rem;
+}
+.concept-tag {
+  font-size: .72rem;
+  font-family: var(--mono);
+  color: var(--accent);
+  border: 1px solid var(--accent);
+  padding: .15rem .5rem;
+  opacity: .75;
+}
+.card-link {
+  display: inline-flex;
+  align-items: center;
+  gap: .4rem;
+  font-size: .82rem;
+  font-weight: 600;
+  color: var(--accent);
+  letter-spacing: .02em;
+}
+.card-link::after {
+  content: '→';
+  font-size: .9em;
+  transition: transform .15s;
+}
+.card:hover .card-link::after {
+  transform: translateX(3px);
+}
+
+/* relation */
+.relation {
+  border: 1px solid var(--rule2);
+  padding: 1.5rem 1.75rem;
+  margin-bottom: 3.5rem;
+  background: var(--bg2);
+}
+.relation-title {
+  font-size: .78rem;
+  font-weight: 600;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  color: var(--ink3);
+  margin-bottom: 1rem;
+  font-family: var(--mono);
+}
+.relation-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 0;
+  border: 1px solid var(--rule2);
+  margin-bottom: 1rem;
+}
+@media (max-width: 600px) {
+  .relation-grid { grid-template-columns: 1fr; }
+}
+.rel-col {
+  padding: .85rem 1rem;
+  border-right: 1px solid var(--rule2);
+  font-size: .83rem;
+}
+.rel-col:last-child { border-right: none; }
+.rel-col-label {
+  font-size: .65rem;
+  font-weight: 600;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  display: block;
+  margin-bottom: .3rem;
+  font-family: var(--mono);
+}
+.rel-col-text {
+  color: var(--ink2);
+  line-height: 1.55;
+}
+.col-ind .rel-col-label { color: var(--acc-ind); }
+.col-warm .rel-col-label { color: var(--acc-warm); }
+.col-teal .rel-col-label { color: var(--acc-teal); }
+
+.relation p {
+  font-size: .85rem;
+  color: var(--ink2);
+  line-height: 1.7;
+}
+
+/* footer */
+.end-rule {
+  max-width: 760px;
+  margin: 4rem auto 1.5rem;
+  padding: 0 2rem;
+  border-top: 1px solid var(--rule);
+}
+.end-note {
+  max-width: 760px;
+  margin: 0 auto;
+  padding: 1.25rem 2rem 0;
+  font-size: .76rem;
+  color: var(--ink3);
+  font-family: var(--mono);
+  letter-spacing: .04em;
+}
+</style>
+</head>
+<body>
+
+<div class="masthead">
+  <div class="mast-inner">
+    <p class="mast-eyebrow">Creative Theory Documents</p>
+    <h1 class="mast-title">創作理論三文書</h1>
+    <p class="mast-desc">創作と受容の構造を三つの異なる座標から記述した理論文書。三文書は上下の位置づけを持たず、同一の現象を相補的に照射する水平の関係にある。</p>
+  </div>
+</div>
+
+<div class="main">
+
+  <div class="abstract">
+    <p>創作はなぜ受け手を動かすのか。テクストはどのような構造として受容されるか。その問いを、受容者の内側から・テクストの張力構造から・物語の設計と体験から、それぞれ記述する。三文書に共通するのは「感動の器はどのように成立するか」という根本的な問いである。</p>
+    <p>各文書は独立して読める。三文書を合わせて読むとき、それぞれが照らせない角度を補い合う。</p>
+  </div>
+
+  <p class="section-label">Documents</p>
+
+  <div class="cards">
+
+    <!-- 遊戯共鳴論 -->
+    <a class="card" href="yugi_kyomei_ron.html" style="--accent: var(--acc-ind)">
+      <div class="card-accent"></div>
+      <div class="card-body">
+        <span class="card-eyebrow">Theory of Play and Resonance</span>
+        <div class="card-title">遊戯共鳴論</div>
+        <div class="card-sub">受容者内核説 · v1.3</div>
+        <p class="card-desc">創作はなぜ受け手を動かすのか。その問いを受容者の側から記述する。受け手の内側には前言語的な感情・意味の構造（内核）があり、テクストとの接触において感合が生じ、内核同士が共鳴する。書くことも読むことも、言語・記号・イメージを素材として内核の感合に導かれながら行う能動的な意味生成活動（遊戯）として理解される。</p>
+        <div class="card-concepts">
+          <span class="concept-tag">内核</span>
+          <span class="concept-tag">遊戯</span>
+          <span class="concept-tag">感合</span>
+          <span class="concept-tag">共鳴</span>
+        </div>
+        <span class="card-link">文書を読む</span>
+      </div>
+    </a>
+
+    <!-- 求心的物語構造理論 -->
+    <a class="card" href="narrative_theory.html" style="--accent: var(--acc-warm)">
+      <div class="card-accent"></div>
+      <div class="card-body">
+        <span class="card-eyebrow">Centripetal Narrative Theory</span>
+        <div class="card-title">求心的物語構造理論</div>
+        <div class="card-sub">設計と体験の二方向モデル · v1.3</div>
+        <p class="card-desc">収束的な感動はどのように設計・体験されるか。作者側の「感情核への求心的設計」と受け手側の「収束体験」を二つのベクトルとして定式化する。霧の中を歩きながら断片・違和感・予兆と出会い続け、やがてバラバラだった要素が一点へと整然と収束する瞬間——その構造を記述する。</p>
+        <div class="card-concepts">
+          <span class="concept-tag">感情核</span>
+          <span class="concept-tag">求心的設計</span>
+          <span class="concept-tag">収束体験</span>
+          <span class="concept-tag">遡及的必然</span>
+        </div>
+        <span class="card-link">文書を読む</span>
+      </div>
+    </a>
+
+    <!-- 読まれるテクストについて -->
+    <a class="card" href="Universal_Communication_Structure.html" style="--accent: var(--acc-teal)">
+      <div class="card-accent"></div>
+      <div class="card-body">
+        <span class="card-eyebrow">Theory of Readable Text</span>
+        <div class="card-title">読まれるテクストについて</div>
+        <div class="card-sub">違和感と回収の構造 · v5.7</div>
+        <p class="card-desc">受け手の解釈体験の内部で何が起きているかを三項モデルで記述する。違和感（V）・回収（R）・基盤（G）の三項が相互作用し、V と R の局所的な張力が解釈体験を駆動する。V は G にないから生じ（欠如・差異の検出）、R は G にあるから成立する（照合・同定による着地）——この二辺の逆の論理が三者の循環構造を形成する。</p>
+        <div class="card-concepts">
+          <span class="concept-tag">V（違和感）</span>
+          <span class="concept-tag">R（回収）</span>
+          <span class="concept-tag">G（基盤）</span>
+          <span class="concept-tag">I ≈ V × R</span>
+        </div>
+        <span class="card-link">文書を読む</span>
+      </div>
+    </a>
+
+  </div>
+
+  <p class="section-label">三文書の相補的関係</p>
+
+  <div class="relation">
+    <p class="relation-title">各文書が照らす角度</p>
+    <div class="relation-grid">
+      <div class="rel-col col-ind">
+        <span class="rel-col-label">遊戯共鳴論</span>
+        <div class="rel-col-text">受容者の内側。感動の器がなぜ受け手に成立するかという枠組みの問い。</div>
+      </div>
+      <div class="rel-col col-warm">
+        <span class="rel-col-label">求心的物語構造理論</span>
+        <div class="rel-col-text">設計と体験の構造。収束的な感動がどのように作られ体験されるかという構造の問い。</div>
+      </div>
+      <div class="rel-col col-teal">
+        <span class="rel-col-label">読まれるテクストについて</span>
+        <div class="rel-col-text">解釈体験の内部。受け手の中で何が起きているかという張力の問い。</div>
+      </div>
+    </div>
+    <p>三文書は対立せず、同一の現象を異なる水準から照射する相補的な関係にある。遊戯共鳴論と求心的理論が「感動の器はどのように成立するか」を問うのに対し、読まれるテクストについては「その器の内部で何が起きているか」を記述する。</p>
+  </div>
+
+</div>
+
+<div class="end-rule"></div>
+<p class="end-note">Creative Theory Documents · 2026</p>
+
+</body>
+</html>
